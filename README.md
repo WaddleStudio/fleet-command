@@ -30,7 +30,7 @@ ext:      .md / .txt
 | **ReviewTrustAnalyzer** | Google Maps 評論信任度分析 | Python / FastAPI / pgvector | V1 ✅ |
 | **SEEDCRAFT** | LINE-first 家庭教育教練 | Python / FastAPI / LINE SDK / Next.js | Rebrand ✅ |
 | **TechTrend** | B2B 技術週刊（NotebookLM → SaaS） | Next.js / Stripe | Spec ✅ |
-| **SmartChoice** | 日常決策 AI 輔助（今天吃什麼） | Next.js PWA / Google Maps API | 規劃中 |
+| **GoDine（搞定）** | AI 餐廳推薦（情境感知 + 個人化） | Next.js PWA / Google Maps API | 規劃中 |
 | **FridgeManager** | 食材管理 + 到期提醒 + AI 食譜 | Next.js PWA / Web Push / Open Food Facts | 規劃中 |
 | **Knoty** | 大學生人際關係圖譜 + 社交風險 AI | React Native / Supabase / D3.js | Spec ✅ |
 
@@ -43,8 +43,8 @@ ext:      .md / .txt
 2️⃣ RTA           — V1 → custom model + Agent SDK
 3️⃣ SEEDCRAFT     — LINE MVP 開發
 4️⃣ TechTrend     — 週刊生產 + 訂閱成長
-5️⃣ SmartChoice   — Spec → Sprint 1
-6️⃣ FridgeManager — Spec → Sprint 1（可與 SmartChoice 平行）
+5️⃣ GoDine        — Spec → Sprint 1
+6️⃣ FridgeManager — Spec → Sprint 1（可與 GoDine 平行）
 7️⃣ Knoty         — Spec 完成，待排入開發
 ```
 
@@ -53,11 +53,11 @@ ext:      .md / .txt
 ## 跨專案整合（高價值路徑）
 
 ```
-SmartChoice → CardSense    推薦餐廳 → 最優付款卡
-SmartChoice → RTA          推薦地點 → 評論信任度驗證
-FridgeManager → SmartChoice 食材快過期 → 今天煮什麼
-FridgeManager → CardSense   採購清單 → 超市最優卡
-SEEDCRAFT → RTA            補習班推薦 → 評論可信度
+GoDine → CardSense       推薦餐廳 → 最優付款卡
+GoDine → RTA             推薦餐廳 → 評論信任度驗證
+FridgeManager → GoDine   食材快過期 → 今天煮什麼
+FridgeManager → CardSense 採購清單 → 超市最優卡
+SEEDCRAFT → RTA           補習班推薦 → 評論可信度
 ```
 
 ---
@@ -73,10 +73,10 @@ SEEDCRAFT → RTA            補習班推薦 → 評論可信度
 | [cardsense-api](https://github.com/WaddleStudio/cardsense-api) | 推薦 API | §4-5 | |
 | [review-trust-analyzer](https://github.com/WaddleStudio/review-trust-analyzer) | 混合評分系統 | spec-rta | |
 | [seedcraft](https://github.com/WaddleStudio/seedcraft) | LINE Bot + LIFF | spec-seedcraft | |
+| [techtrend](https://github.com/WaddleStudio/techtrend) | B2B 技術週刊 | spec-techtrend | |
+| [godine](https://github.com/WaddleStudio/godine) | AI 餐廳推薦 | spec-godine | |
+| [fridgemanager](https://github.com/WaddleStudio/fridgemanager) | 食材管理 | spec-fridgemanager | |
 | [knoty](https://github.com/WaddleStudio/knoty) | 人際關係圖譜 | spec-knoty | |
-| [techtrend](https://github.com/WaddleStudio/techtrend) | B2B 技術週刊 | spec-techtrend | 待建 |
-| [smartchoice](https://github.com/WaddleStudio/smartchoice) | 日常決策 AI | spec-smartchoice | 待建 |
-| [fridgemanager](https://github.com/WaddleStudio/fridgemanager) | 食材管理 | spec-fridgemanager | 待建 |
 
 更新流程：**改 spec → commit to fleet-command → 對應 code repo 跟進實作**。
 
