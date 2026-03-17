@@ -1,6 +1,6 @@
 # Fleet Command（專案艦隊指揮中心）
 
-六個 side project 的統一規格書庫 — 架構文件、專案 Spec、TechTrend 知識庫來源。
+七個 side project 的統一規格書庫 — 架構文件、專案 Spec、TechTrend 知識庫來源。
 
 > 所有專案以商業化為最終目標。各 Spec 均包含版權/IP 風險評估。
 
@@ -29,9 +29,10 @@ ext:      .md / .txt
 | **CardSense** | 信用卡推薦 API（確定性規則引擎） | Java 21 / Spring Boot / PostgreSQL | Sprint 0 ✅ |
 | **ReviewTrustAnalyzer** | Google Maps 評論信任度分析 | Python / FastAPI / pgvector | V1 ✅ |
 | **SEEDCRAFT** | LINE-first 家庭教育教練 | Python / FastAPI / LINE SDK / Next.js | Rebrand ✅ |
-| **TechTrend** | B2B 技術週刊（NotebookLM → SaaS） | Next.js / OpenClaw / Stripe | Spec ✅ |
+| **TechTrend** | B2B 技術週刊（NotebookLM → SaaS） | Next.js / Stripe | Spec ✅ |
 | **SmartChoice** | 日常決策 AI 輔助（今天吃什麼） | Next.js PWA / Google Maps API | 規劃中 |
 | **FridgeManager** | 食材管理 + 到期提醒 + AI 食譜 | Next.js PWA / Web Push / Open Food Facts | 規劃中 |
+| **Knoty** | 大學生人際關係圖譜 + 社交風險 AI | React Native / Supabase / D3.js | Spec ✅ |
 
 ---
 
@@ -44,6 +45,7 @@ ext:      .md / .txt
 4️⃣ TechTrend     — 週刊生產 + 訂閱成長
 5️⃣ SmartChoice   — Spec → Sprint 1
 6️⃣ FridgeManager — Spec → Sprint 1（可與 SmartChoice 平行）
+7️⃣ Knoty         — Spec 完成，待排入開發
 ```
 
 ---
@@ -66,16 +68,17 @@ SEEDCRAFT → RTA            補習班推薦 → 評論可信度
 
 | Repo | 內容 | Spec | 狀態 |
 |------|------|------|------|
-| [cardsense-contracts](https://github.com/skywalker6666/cardsense-contracts) | 共用資料模型 | §4 | |
-| [cardsense-extractor](https://github.com/skywalker6666/cardsense-extractor) | 銀行爬蟲 + LLM 解析 | §3 | |
-| [cardsense-api](https://github.com/skywalker6666/cardsense-api) | 推薦 API | §4-5 | |
-| [review-trust-analyzer](https://github.com/skywalker6666/review-trust-analyzer) | 混合評分系統 | spec-rta | |
-| [seedcraft](https://github.com/skywalker6666/seedcraft) | LINE Bot + LIFF | spec-seedcraft | |
-| [techtrend](https://github.com/skywalker6666/techtrend) | B2B 技術週刊 | spec-techtrend | 待建 |
-| [smartchoice](https://github.com/skywalker6666/smartchoice) | 日常決策 AI | spec-smartchoice | 待建 |
-| [fridgemanager](https://github.com/skywalker6666/fridgemanager) | 食材管理 | spec-fridgemanager | 待建 |
+| [cardsense-contracts](https://github.com/WaddleStudio/cardsense-contracts) | 共用資料模型 | §4 | |
+| [cardsense-extractor](https://github.com/WaddleStudio/cardsense-extractor) | 銀行爬蟲 + LLM 解析 | §3 | |
+| [cardsense-api](https://github.com/WaddleStudio/cardsense-api) | 推薦 API | §4-5 | |
+| [review-trust-analyzer](https://github.com/WaddleStudio/review-trust-analyzer) | 混合評分系統 | spec-rta | |
+| [seedcraft](https://github.com/WaddleStudio/seedcraft) | LINE Bot + LIFF | spec-seedcraft | |
+| [knoty](https://github.com/WaddleStudio/knoty) | 人際關係圖譜 | spec-knoty | |
+| [techtrend](https://github.com/WaddleStudio/techtrend) | B2B 技術週刊 | spec-techtrend | 待建 |
+| [smartchoice](https://github.com/WaddleStudio/smartchoice) | 日常決策 AI | spec-smartchoice | 待建 |
+| [fridgemanager](https://github.com/WaddleStudio/fridgemanager) | 食材管理 | spec-fridgemanager | 待建 |
 
-更新流程：**改 spec → commit to portfolio-docs → 對應 code repo 跟進實作**。
+更新流程：**改 spec → commit to fleet-command → 對應 code repo 跟進實作**。
 
 ---
 
@@ -88,4 +91,4 @@ SEEDCRAFT → RTA            補習班推薦 → 評論可信度
 
 ---
 
-*Maintained by Alan | Last updated: 2026-02-25*
+*Maintained by [Waddle Studio](https://github.com/WaddleStudio) | Last updated: 2026-03-17*
