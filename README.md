@@ -26,7 +26,7 @@ ext:      .md / .txt
 
 | 專案 | 定位 | 技術棧 | 狀態 |
 |------|------|--------|------|
-| **CardSense** | 信用卡推薦 API（確定性規則引擎） | Java 21 / Spring Boot / PostgreSQL | Sprint 0 ✅ |
+| **CardSense** | 信用卡推薦 API（確定性規則引擎） | Java 21 / Spring Boot / React 19 / Python 3.13 | MVP ✅ Live |
 | **ReviewTrustAnalyzer** | Google Maps 評論信任度分析 | Python / FastAPI / pgvector | V1 ✅ |
 | **SEEDCRAFT** | LINE-first 家庭教育教練 | Python / FastAPI / LINE SDK / Next.js | Rebrand ✅ |
 | **TechTrend** | B2B 技術週刊（NotebookLM → SaaS） | Next.js / Stripe | Spec ✅ |
@@ -39,7 +39,7 @@ ext:      .md / .txt
 ## 開發優先序
 
 ```
-1️⃣ CardSense     — Sprint 1 開發中（最高商業價值）
+1️⃣ CardSense     — MVP Live，Phase 1 銀行擴充中（最高商業價值）
 2️⃣ RTA           — V1 → custom model + Agent SDK
 3️⃣ SEEDCRAFT     — LINE MVP 開發
 4️⃣ TechTrend     — 週刊生產 + 訂閱成長
@@ -68,9 +68,10 @@ SEEDCRAFT → RTA           補習班推薦 → 評論可信度
 
 | Repo | 內容 | Spec | 狀態 |
 |------|------|------|------|
-| [cardsense-contracts](https://github.com/WaddleStudio/cardsense-contracts) | 共用資料模型 | §4 | |
-| [cardsense-extractor](https://github.com/WaddleStudio/cardsense-extractor) | 銀行爬蟲 + LLM 解析 | §3 | |
-| [cardsense-api](https://github.com/WaddleStudio/cardsense-api) | 推薦 API | §4-5 | |
+| [cardsense-contracts](https://github.com/WaddleStudio/cardsense-contracts) | 共用資料模型 | §4 | Schema 穩定 |
+| [cardsense-extractor](https://github.com/WaddleStudio/cardsense-extractor) | 銀行爬蟲 + LLM 解析 | §3 | 4 銀行完成 |
+| [cardsense-api](https://github.com/WaddleStudio/cardsense-api) | 推薦 API | §4-5 | Railway 部署 |
+| [cardsense-web](https://github.com/WaddleStudio/cardsense-web) | 前端展示 | — | Vercel Live |
 | [review-trust-analyzer](https://github.com/WaddleStudio/review-trust-analyzer) | 混合評分系統 | spec-rta | |
 | [seedcraft](https://github.com/WaddleStudio/seedcraft) | LINE Bot + LIFF | spec-seedcraft | |
 | [techtrend](https://github.com/WaddleStudio/techtrend) | B2B 技術週刊 | spec-techtrend | |
@@ -91,4 +92,4 @@ SEEDCRAFT → RTA           補習班推薦 → 評論可信度
 
 ---
 
-*Maintained by [Waddle Studio](https://github.com/WaddleStudio) | Last updated: 2026-03-17*
+*Maintained by [Waddle Studio](https://github.com/WaddleStudio) | Last updated: 2026-03-23*
