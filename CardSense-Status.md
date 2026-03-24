@@ -50,11 +50,11 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 | 模組 | 狀態 | 說明 |
 |------|------|------|
 | cardsense-contracts | ✅ 完成 | Promotion / Recommendation / Stackability schema 穩定，結構化 conditions |
-| cardsense-extractor | ✅ 核心完成 | E.SUN + Cathay + TAISHIN + FUBON real extractor、JSONL + SQLite 匯入、refresh_and_deploy 一鍵流程 |
+| cardsense-extractor | ✅ 核心完成 | E.SUN + Cathay + TAISHIN + FUBON + CTBC real extractor、JSONL + SQLite 匯入、refresh_and_deploy 一鍵流程 |
 | cardsense-api | ✅ 核心完成 + 已部署 | 情境推薦、雙模式比較（BEST_SINGLE / STACK_ALL）、break-even、scope 過濾、stackability 解析；Railway 上線 |
-| cardsense-web | ✅ MVP 完成 + 已部署 | 推薦表單 + 卡片目錄（63 張卡）+ 銀行篩選 + 深色模式 + RWD + fintech UI；Vercel 上線 |
+| cardsense-web | ✅ MVP 完成 + 已部署 | 推薦表單 + 卡片目錄（101 張卡）+ 銀行篩選 + 深色模式 + RWD + fintech UI；Vercel 上線 |
 | 資料庫遷移 | ⏳ 規劃中 | SQLite → Supabase，待觸發條件（見 Phase 3） |
-| 銀行擴充 | 🔄 進行中 | TAISHIN ✅ FUBON ✅ 完成、下一批：CTBC（因 WAF 暫緩） |
+| 銀行擴充 | 🔄 進行中 | TAISHIN ✅ FUBON ✅ CTBC ✅ 完成（5 銀行 101 張卡 452 筆優惠）、下一批：MEGA / SINOPAC |
 | Auth / Rate Limiting | ⏳ 未開始 | Phase 2 商業化時實作 |
 
 ## 已支援銀行
@@ -65,7 +65,7 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 | ✅ CATHAY（國泰） | `cathay_real.py` | Model JSON 抽取 |
 | ✅ TAISHIN（台新） | `taishin_real.py` | Cloudflare Browser Rendering + HTML |
 | ✅ FUBON（富邦） | `fubon_real.py` | Cloudflare Browser Rendering + HTML |
-| ⏳ CTBC | — | WAF 保護暫緩 |
+| ✅ CTBC（中信） | `ctbc_real.py` | JSON API（creditcards.cardlist.json）+ Playwright |
 | ⏳ MEGA / FIRST / SINOPAC / TPBANK / UBOT | — | 待排入 |
 
 ---
@@ -74,7 +74,7 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 ### cardsense-web（最活躍）
 
-**Latest**: `e180080` — docs: rewrite README (2026-03-23)
+**Latest**: `92c56c6` — fix: prevent logo and card title overflow on narrow screens (2026-03-24)
 
 **近期功能迭代**：
 - `89aeda3` fix: remaining UX issues + break-even analysis display
@@ -136,7 +136,7 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 ### cardsense-extractor
 
-**Latest**: `074c727` — fix: improve reward extraction accuracy and cap detection (2026-03-23)
+**Latest**: `32bce41` — feat: add Playwright fetcher, CTBC runner, Fubon name cleaning (2026-03-24)
 
 **專案結構**：
 ```
@@ -145,17 +145,18 @@ extractor/
 ├── cathay_real.py             # Cathay：Model JSON 抽取
 ├── taishin_real.py            # Taishin：Cloudflare Browser Rendering
 ├── fubon_real.py              # Fubon：Cloudflare Browser Rendering
-├── promotion_rules.py         # reward / category / condition heuristics
+├── ctbc_real.py               # CTBC：JSON API + Playwright（47 張卡）
+├── promotion_rules.py         # reward / category / condition heuristics（含民國年份轉換）
 ├── html_utils.py              # HTML cleanup helpers
 ├── page_extractors/
 │   └── sectioned_page.py     # shared section / offer block extraction
 ├── db_store.py                # SQLite persistence helpers
 ├── ingest.py / parse_rules.py / normalize.py / validate.py / versioning.py / load.py
 jobs/
-├── refresh_and_deploy.py      # 一鍵全銀行 extract → import → deploy
+├── refresh_and_deploy.py      # 一鍵全銀行 extract → import → deploy（含 CTBC）
 ├── import_jsonl_to_db.py      # JSONL → SQLite importer
 ├── run_real_bank_job.py       # shared runner for bank extractors
-├── run_{esun,cathay,taishin,fubon}_real_job.py
+├── run_{esun,cathay,taishin,fubon,ctbc}_real_job.py
 ├── analyze_jsonl_output.py    # quality inspection
 sql/
 └── cardsense_schema.sql       # SQLite schema
@@ -237,7 +238,7 @@ taxonomy/      → category / channel / frequency taxonomy
 
 ### Phase 1：新銀行擴充 + Extractor 能力提升
 
-**新銀行優先序**：TAISHIN ✅ → FUBON ✅ → CTBC（CTBC 因 WAF 保護暫緩）
+**新銀行優先序**：TAISHIN ✅ → FUBON ✅ → CTBC ✅（JSON API 繞過 WAF，Playwright 抓 detail 頁）
 
 - 每家銀行先分析官網結構，判斷適用 HTML 抽取或 JSON API
 - 復用 `promotion_rules.py` 與 `run_real_bank_job.py` 共用層
@@ -356,10 +357,10 @@ npm run dev                                       # http://localhost:5173
 ## 子專案連結
 
 - [cardsense-contracts](https://github.com/WaddleStudio/cardsense-contracts) — 共用資料契約、schema、列舉定義、stackability
-- [cardsense-extractor](https://github.com/WaddleStudio/cardsense-extractor) — 資料擷取 pipeline、4 銀行 extractor、SQLite 匯入
+- [cardsense-extractor](https://github.com/WaddleStudio/cardsense-extractor) — 資料擷取 pipeline、5 銀行 extractor、SQLite 匯入
 - [cardsense-api](https://github.com/WaddleStudio/cardsense-api) — 推薦 API、比較模式、break-even 分析、Postman collection
 - [cardsense-web](https://github.com/WaddleStudio/cardsense-web) — 前端展示、推薦表單、卡片目錄、深色模式
 - [CardSense Spec](./specs/spec-cardSense.md) — 完整專案規格說明書
 - [API Implementation Checklist](https://github.com/WaddleStudio/cardsense-api/blob/master/IMPLEMENTATION_CHECKLIST.md) — API 待辦與遷移時機
 
-*Last updated: 2026-03-23*
+*Last updated: 2026-03-24*
