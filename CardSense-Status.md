@@ -51,8 +51,8 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 |------|------|------|
 | cardsense-contracts | ✅ 完成 | Promotion / Recommendation / Stackability schema 穩定，結構化 conditions |
 | cardsense-extractor | ✅ 核心完成 | E.SUN + Cathay + TAISHIN + FUBON + CTBC real extractor、JSONL + SQLite 匯入、refresh_and_deploy 一鍵流程 |
-| cardsense-api | ✅ 核心完成 + 已部署 | 情境推薦、雙模式比較（BEST_SINGLE / STACK_ALL）、break-even、scope 過濾、stackability 解析；Railway 上線 |
-| cardsense-web | ✅ MVP 完成 + 已部署 | 推薦表單 + 卡片目錄（101 張卡）+ 銀行篩選 + 深色模式 + RWD + fintech UI；Vercel 上線 |
+| cardsense-api | ✅ 核心完成 + 已部署 | 情境推薦、疊加優惠計算（已移除雙模式）、break-even、scope 過濾、eligibilityType 過濾、平台/通路 condition 匹配、stackability 解析；Railway 上線 |
+| cardsense-web | ✅ MVP 完成 + 已部署 | 推薦表單 + 卡片目錄（101 張卡）+ 多維篩選標籤 + 卡片優惠顯示 + 深色模式 + RWD + fintech UI；Vercel 上線 |
 | 資料庫遷移 | ⏳ 規劃中 | SQLite → Supabase，待觸發條件（見 Phase 3） |
 | 銀行擴充 | 🔄 進行中 | TAISHIN ✅ FUBON ✅ CTBC ✅ 完成（5 銀行 101 張卡 452 筆優惠）、下一批：MEGA / SINOPAC |
 | Auth / Rate Limiting | ⏳ 未開始 | Phase 2 商業化時實作 |
@@ -86,10 +86,11 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 **已完成功能**：
 - 情境式推薦表單（金額、類別、通路）
-- 兩種比較模式（最佳單一優惠 / 所有可疊加優惠）
+- 疊加優惠計算（自動計算所有可疊加優惠總和）
 - 優惠明細展開（逐一列出回饋金額、條件、有效期）
 - 損益平衡分析（疊加模式自動計算兩卡損益平衡消費點）
-- 卡片目錄頁 + 詳情頁（依銀行、名稱篩選與排序）
+- 卡片目錄頁（多維篩選：銀行、資格類型、優惠類別、年費區間、推薦範圍）
+- 卡片詳情頁（基本資料 + 優惠資訊依類別分組顯示 + 權益切換提醒）
 - 深色模式（跟隨系統偏好，可手動切換）
 - 行動裝置 RWD 最佳化
 - Fintech 風格 UI（OKLCH 語意色彩 token）
@@ -109,11 +110,21 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 - `CorsConfig` — 前端跨域存取
 - `ApiKeyFilter` — API Key 認證（public endpoints 免驗）
 
-**比較模式**：
-| Mode | 說明 |
+**比較模式**：固定使用疊加優惠計算（`STACK_ALL_ELIGIBLE`），已移除 `BEST_SINGLE_PROMOTION` 模式（其結果為疊加模式的子集，無獨立用途）。
+
+**eligibilityType 過濾**：
+| Type | 說明 |
 |------|------|
-| `BEST_SINGLE_PROMOTION` | 每張卡取最佳單筆 promotion 做排名 |
-| `STACK_ALL_ELIGIBLE` | 依 `promotion.stackability` metadata 解出可並存組合，計算 card-level total return |
+| `GENERAL` | 一般卡片，可進入推薦排名 |
+| `PROFESSION_SPECIFIC` | 職業限定卡（醫師卡、會計師卡等），僅目錄展示 |
+| `BUSINESS` | 商務/公司卡，僅目錄展示 |
+
+**平台/通路 Condition 匹配**：
+| Condition Type | 用途 | 範例 |
+|---|---|---|
+| `ECOMMERCE_PLATFORM` | 電商平台限定 | MOMO, SHOPEE, PCHOME |
+| `RETAIL_CHAIN` | 實體通路限定 | COSTCO, PXMART, CARREFOUR |
+| `PAYMENT_PLATFORM` | 支付平台限定 | LINE_PAY, JKOPAY, TAIWAN_PAY |
 
 **推薦排序（確定性五層 tiebreaker）**：
 1. effective return 降序
@@ -201,7 +212,8 @@ taxonomy/      → category / channel / frequency taxonomy
 |------|------|------|
 | GET | `/health` | 健康檢查（DB 連線 + 運行狀態） |
 | GET | `/v1/banks` | 銀行列表 |
-| GET | `/v1/cards?bank=&status=&scope=` | 卡片目錄（scope=CATALOG_ONLY 拉 catalog 型卡片） |
+| GET | `/v1/cards?bank=&status=&scope=&eligibilityType=` | 卡片目錄（支援 eligibilityType 篩選） |
+| GET | `/v1/cards/{cardCode}/promotions` | 卡片優惠列表（依 category 分組） |
 | POST | `/v1/recommendations/card` | 情境推薦 |
 
 **API 方案（Phase 2）**：
@@ -361,6 +373,8 @@ npm run dev                                       # http://localhost:5173
 - [cardsense-api](https://github.com/WaddleStudio/cardsense-api) — 推薦 API、比較模式、break-even 分析、Postman collection
 - [cardsense-web](https://github.com/WaddleStudio/cardsense-web) — 前端展示、推薦表單、卡片目錄、深色模式
 - [CardSense Spec](./specs/spec-cardSense.md) — 完整專案規格說明書
+- [推薦引擎增強設計](./specs/cardsense-plans/2026-03-28-recommendation-enhancement-design.md) — 六項增強設計文件
+- [推薦引擎增強實作計畫](./specs/cardsense-plans/2026-03-28-recommendation-enhancement-impl.md) — 10-task 實作計畫
 - [API Implementation Checklist](https://github.com/WaddleStudio/cardsense-api/blob/master/IMPLEMENTATION_CHECKLIST.md) — API 待辦與遷移時機
 
-*Last updated: 2026-03-24*
+*Last updated: 2026-03-28*
