@@ -37,11 +37,12 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 |------|------|------|
 | cardsense-contracts | ✅ 完成 | Promotion / Recommendation schema 穩定，含 Stackability metadata |
 | cardsense-extractor | ✅ 核心完成 | 5 家銀行 real extractor（E.SUN / Cathay / Taishin / Fubon / CTBC）、JSONL + SQLite + Supabase sync |
-| cardsense-api | ✅ 核心完成 | 情境推薦、雙模式比較（BEST_SINGLE / STACK_ALL）、break-even、benefit plan 權益切換、scope 過濾、Supabase 讀取 |
+| cardsense-api | ✅ 核心完成 | 情境推薦、疊加優惠計算（STACK_ALL_ELIGIBLE）、break-even、benefit plan 權益切換、subcategory 過濾、scope 過濾、Supabase 讀取 |
 | cardsense-web | ✅ MVP Live | 推薦頁 `/recommend`、卡片目錄 `/cards`、卡片詳情 `/cards/:cardCode`、`/calc` 年度損失社群入口頁 |
 | 資料庫遷移 | ✅ 完成 | Extractor → SQLite → Supabase sync（psycopg2）；API prod 從 Supabase 讀取 |
 | 銀行擴充 | ✅ Phase 1 完成 | 5 家銀行全部上線（E.SUN / Cathay / Taishin / Fubon / CTBC） |
 | 權益切換 | ✅ 核心完成 | Extractor plan inference + API DecisionEngine 自動選擇最佳 plan；支援 CATHAY CUBE（7 plans）、TAISHIN RICHART |
+| 子類別場景排名 | ✅ 核心完成 | Subcategory 維度（MOVIE, DELIVERY, DEPARTMENT 等）過濾場景限定優惠，避免汙染通用排名 |
 
 ## 已支援銀行
 
@@ -84,6 +85,18 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 - **已支援卡片**：CATHAY CUBE（7 plans：數位/饗購/旅行/精選/生日/兒童/日本）、TAISHIN RICHART、E.SUN UNI Card（3 plans：簡單選/任意選/UP選）
 - **contracts**：`benefit-plan.schema.json` ✅ 已建立
 - **前端**：`activePlan` 顯示 ✅ 已完成（`PlanSwitchBadge` 元件，含方案名稱、切換頻率、訂閱費用）
+
+### 子類別場景排名（Subcategory Scenario Ranking）✅
+
+在 8 大 `category` 之下新增 `subcategory` 維度，解決商家限定優惠汙染通用排名的問題。
+
+- **Extractor**：`SubcategoryEnum`（15 值）、`SUBCATEGORY_SIGNALS` 信號字典、`infer_subcategory()` 關鍵字 scoring（threshold ≥ 3）；5 家銀行 extractor 全部整合
+- **API**：`DecisionEngine.isEligible()` 新增 subcategory 過濾 — 通用查詢排除場景限定優惠；選擇子類別時，該場景 + GENERAL 優惠一起排名
+- **DB**：`subcategory TEXT NOT NULL DEFAULT 'GENERAL'` 加入 `promotion_versions` 和 `promotion_current`
+- **contracts**：`promotion-normalized.schema.json`、`recommendation-request/response.schema.json` 皆已更新
+- **前端**：`SubcategoryGrid.tsx` 元件（水平 chip row），CalcPage 整合，ResultPanel 場景 badge
+- **Phase 1 覆蓋**：ENTERTAINMENT（電影/遊樂園/KTV/串流）、DINING（外送/指定餐廳/咖啡/飯店）、SHOPPING（百貨/量販/3C）、ONLINE（電商/行動支付/訂閱）
+- **設計文件**：[`specs/2026-04-01-subcategory-scenario-ranking-design.md`](./specs/2026-04-01-subcategory-scenario-ranking-design.md)
 
 ## 待辦工作路線圖（Roadmap）
 
@@ -161,7 +174,7 @@ cd cardsense-contracts
 
 - [cardsense-contracts README](../cardsense-contracts/README.md) — 共用資料契約、schema、列舉定義
 - [cardsense-extractor README](../cardsense-extractor/README.md) — 資料擷取 pipeline、銀行 extractor、SQLite 匯入
-- [cardsense-api README](../cardsense-api/README.md) — 推薦 API、比較模式、break-even 分析
+- [cardsense-api README](../cardsense-api/README.md) — 推薦 API、疊加優惠計算、benefit plan / subcategory 支援
 - [cardsense-web README](../cardsense-web/README.md) — 前端展示、技術棧、部署設定
 - [API Implementation Checklist](../cardsense-api/IMPLEMENTATION_CHECKLIST.md) — API 待辦與前端 / 資料庫遷移時機
 - [CardSense Demo Spec](./CardSense-Demo-Spec.md) — `/calc` 年度損失入口頁詳細規格

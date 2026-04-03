@@ -10,9 +10,9 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 | 子專案 | 角色 | 技術棧 | 部署 | GitHub |
 |--------|------|--------|------|--------|
-| cardsense-contracts | 共用資料契約（JSON Schema、DTO、列舉、stackability） | JSON Schema | — | [WaddleStudio/cardsense-contracts](https://github.com/WaddleStudio/cardsense-contracts) |
-| cardsense-extractor | 銀行優惠資料擷取與正規化 | Python 3.13+ / uv / Pydantic / SQLite | Local | [WaddleStudio/cardsense-extractor](https://github.com/WaddleStudio/cardsense-extractor) |
-| cardsense-api | 情境推薦 REST API | Java 21 / Spring Boot / SQLite / Maven | Railway | [WaddleStudio/cardsense-api](https://github.com/WaddleStudio/cardsense-api) |
+| cardsense-contracts | 共用資料契約（JSON Schema、DTO、列舉、stackability、benefit plan） | JSON Schema | — | [WaddleStudio/cardsense-contracts](https://github.com/WaddleStudio/cardsense-contracts) |
+| cardsense-extractor | 銀行優惠資料擷取與正規化 | Python 3.13+ / uv / Pydantic / SQLite + Supabase sync | Local | [WaddleStudio/cardsense-extractor](https://github.com/WaddleStudio/cardsense-extractor) |
+| cardsense-api | 情境推薦 REST API | Java 21 / Spring Boot / SQLite / Supabase / Maven | Railway | [WaddleStudio/cardsense-api](https://github.com/WaddleStudio/cardsense-api) |
 | cardsense-web | 前端展示 | React 19 / TypeScript 5.9 / Vite 8 / shadcn/ui / Tailwind CSS 4 | Vercel | [WaddleStudio/cardsense-web](https://github.com/WaddleStudio/cardsense-web) |
 
 > 所有 repo 集中於 `D:/Projects/cardsense-workspace/` 統一管理。
@@ -20,11 +20,11 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 ## 架構總覽
 
 ```
-銀行官網 ──→ Extractor ──→ JSONL ──→ SQLite ──→ API (Railway) ──→ Frontend (Vercel)
-              │                        │
-              │  scrape / heuristic    │  promotion_current table
-              │  normalize / version   │  確定性規則引擎
-              ▼                        ▼
+銀行官網 ──→ Extractor ──→ JSONL ──→ SQLite ──→ Supabase ──→ API (Railway) ──→ Frontend (Vercel)
+              │                        │            │
+              │  scrape / heuristic    │  local DB   │  PostgreSQL (prod)
+              │  normalize / version   │            │  確定性規則引擎
+              ▼                        ▼            ▼
         cardsense-contracts      cardsense-contracts
         (schema 驗證)            (DTO / response 契約)
 ```
@@ -33,14 +33,14 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 - **用戶請求路徑零 LLM** — 確定性規則引擎，100% 可重現、可審計
 - **版本不可變** — `promoVersionId`，語義變更 = 新版本，SHA-256 hash 去重
 - **強制免責聲明** — 每筆 API 回應包含法律 disclaimer
-- **Repository 抽象** — mock / sqlite 雙模式，切換無需改動業務邏輯
+- **Repository 抽象** — mock / sqlite / supabase 三模式，切換無需改動業務邏輯
 
 **資料流**：
 1. **Extractor** 從銀行官網擷取原始優惠頁面（local 執行）
 2. 經過 scrape → parse_rules → normalize → validate → version 產生 JSONL
 3. `import_jsonl_to_db.py` 匯入 **SQLite** 的 `promotion_current` table
-4. `refresh_and_deploy.py` 一鍵完成全銀行提取 → 匯入 → 部署至 Railway
-5. **API** (Railway) 從 SQLite 讀取 promotion 資料，Dockerfile bake-in DB
+4. `refresh_and_deploy.py` 一鍵完成全銀行提取 → 匯入 → 同步至 **Supabase**
+5. **API** (Railway) 在 prod 從 Supabase 讀取 promotion 資料；local 仍可直接連 SQLite
 6. **Frontend** (Vercel) 呼叫 API 展示推薦結果
 
 ---
@@ -49,11 +49,11 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 | 模組 | 狀態 | 說明 |
 |------|------|------|
-| cardsense-contracts | ✅ 完成 | Promotion / Recommendation / Stackability schema 穩定，結構化 conditions |
-| cardsense-extractor | ✅ 核心完成 | E.SUN + Cathay + TAISHIN + FUBON + CTBC real extractor、JSONL + SQLite 匯入、refresh_and_deploy 一鍵流程 |
-| cardsense-api | ✅ 核心完成 + 已部署 | 情境推薦、疊加優惠計算（已移除雙模式）、break-even、scope 過濾、eligibilityType 過濾、平台/通路 condition 匹配、stackability 解析；Railway 上線 |
-| cardsense-web | ✅ MVP 完成 + 已部署 | 推薦表單 + 卡片目錄（101 張卡）+ 多維篩選標籤 + 卡片優惠顯示 + 深色模式 + RWD + fintech UI；下一個 slice 為 `/calc` 社群入口頁 |
-| 資料庫遷移 | ⏳ 規劃中 | SQLite → Supabase，待觸發條件（見 Phase 3） |
+| cardsense-contracts | ✅ 完成 | Promotion / Recommendation / Stackability schema 穩定，含 subcategory 欄位 |
+| cardsense-extractor | ✅ 核心完成 | E.SUN + Cathay + TAISHIN + FUBON + CTBC real extractor、subcategory inference、JSONL + SQLite 匯入、refresh_and_deploy |
+| cardsense-api | ✅ 核心完成 + 已部署 | 情境推薦、疊加優惠計算、break-even、subcategory 場景過濾、scope/eligibilityType/通路 condition 匹配；Railway 上線 |
+| cardsense-web | ✅ MVP 完成 + 已部署 | 推薦表單 + 卡片目錄 + SubcategoryGrid 場景選擇 + `/calc` 社群入口頁 + 深色模式 + RWD + fintech UI |
+| 資料庫遷移 | ✅ 完成 | SQLite → Supabase sync 已上線；API prod 從 Supabase 讀取 |
 | 銀行擴充 | 🔄 進行中 | TAISHIN ✅ FUBON ✅ CTBC ✅ 完成（5 銀行 101 張卡 452 筆優惠）、下一批：MEGA / SINOPAC |
 | Auth / Rate Limiting | ⏳ 未開始 | Phase 2 商業化時實作 |
 
@@ -112,7 +112,7 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 - `DecisionEngine`（736+ 行）— 確定性推薦邏輯，scenario 解析、promotion 過濾、回饋計算、排序
 - `RewardCalculator` — PERCENT / FIXED / POINTS 回饋計算，封頂邏輯
 - `CatalogService` — 卡片目錄查詢，scope-aware（RECOMMENDABLE / CATALOG_ONLY / FUTURE_SCOPE）
-- `SqlitePromotionRepository` — 讀取 extractor 匯入的 `promotion_current`，還原 stackability metadata
+- `SqlitePromotionRepository` / `SupabasePromotionRepository` — 支援 local SQLite 與 prod Supabase 兩種 promotion 來源
 - `CorsConfig` — 前端跨域存取
 - `ApiKeyFilter` — API Key 認證（public endpoints 免驗）
 
@@ -144,8 +144,9 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 |------|------|----------|
 | mock（預設） | 無需設定 | `promotions.json` |
 | sqlite | `cardsense.repository.mode=sqlite` | extractor 匯入的 `promotion_current` |
+| supabase | `cardsense.repository.mode=supabase` | Supabase PostgreSQL `promotion_current` |
 
-**部署**：Railway，Dockerfile bake-in SQLite DB
+**部署**：Railway；prod profile 連 Supabase PostgreSQL，local profile 保留 SQLite
 
 **測試覆蓋**：DecisionEngineTest（387+ 行）、CathaySqliteApiIntegrationTest（327 行）、SqliteApiSmokeTest、CatalogServiceTest、SqlitePromotionRepositoryTest
 
@@ -163,14 +164,15 @@ extractor/
 ├── taishin_real.py            # Taishin：Cloudflare Browser Rendering
 ├── fubon_real.py              # Fubon：Cloudflare Browser Rendering
 ├── ctbc_real.py               # CTBC：JSON API + Playwright（47 張卡）
-├── promotion_rules.py         # reward / category / condition heuristics（含民國年份轉換）
+├── promotion_rules.py         # reward / category / condition / subcategory heuristics
 ├── html_utils.py              # HTML cleanup helpers
 ├── page_extractors/
 │   └── sectioned_page.py     # shared section / offer block extraction
 ├── db_store.py                # SQLite persistence helpers
+├── supabase_store.py          # Supabase PostgreSQL sync helpers
 ├── ingest.py / parse_rules.py / normalize.py / validate.py / versioning.py / load.py
 jobs/
-├── refresh_and_deploy.py      # 一鍵全銀行 extract → import → deploy（含 CTBC）
+├── refresh_and_deploy.py      # 一鍵全銀行 extract → import → Supabase sync
 ├── import_jsonl_to_db.py      # JSONL → SQLite importer
 ├── run_real_bank_job.py       # shared runner for bank extractors
 ├── run_{esun,cathay,taishin,fubon,ctbc}_real_job.py
@@ -220,6 +222,7 @@ taxonomy/      → category / channel / frequency taxonomy
 | GET | `/v1/banks` | 銀行列表 |
 | GET | `/v1/cards?bank=&status=&scope=&eligibilityType=` | 卡片目錄（支援 eligibilityType 篩選） |
 | GET | `/v1/cards/{cardCode}/promotions` | 卡片優惠列表（依 category 分組） |
+| GET | `/v1/cards/{cardCode}/plans` | 卡片 benefit plan 列表 |
 | POST | `/v1/recommendations/card` | 情境推薦 |
 
 **API 方案（Phase 2）**：
@@ -285,22 +288,12 @@ taxonomy/      → category / channel / frequency taxonomy
 - Stripe Billing 整合（API 訂閱制）
 - 前端進階功能：break-even 視覺化 ✅、多優惠堆疊展示 ✅
 
-### Phase 3：資料庫遷移（SQLite → Supabase）
+### Phase 3：資料庫遷移（SQLite → Supabase）✅
 
-不急，按觸發條件決定時機。**任一成立即啟動**：
-
-- 多個前端環境需要共享讀取
-- audit log 需外部查詢
-- extractor 需集中儲存
-- 部署環境需共享 persistence
-
-**遷移步驟**：
-
-1. 凍結前端 API 契約
-2. 完成 E.SUN / CATHAY 端對端 smoke coverage
-3. 建立 PostgreSQL schema parity
-4. 加入 repository abstraction 雙跑測試
-5. 切換至 Supabase
+- Extractor 已支援 SQLite → Supabase sync（`supabase_store.py` + `refresh_and_deploy.py`）
+- API prod profile 已切到 Supabase PostgreSQL，local profile 仍保留 SQLite
+- `promotion_versions` / `promotion_current` / `extract_runs` 三張表都已完成 schema parity
+- `subcategory` 與 `planId` 等新欄位已貫穿 SQLite / Supabase / API response
 
 ### Phase 4：Skill 整理
 
@@ -377,7 +370,7 @@ npm run dev                                       # http://localhost:5173
 
 - [cardsense-contracts](https://github.com/WaddleStudio/cardsense-contracts) — 共用資料契約、schema、列舉定義、stackability
 - [cardsense-extractor](https://github.com/WaddleStudio/cardsense-extractor) — 資料擷取 pipeline、5 銀行 extractor、SQLite 匯入
-- [cardsense-api](https://github.com/WaddleStudio/cardsense-api) — 推薦 API、比較模式、break-even 分析、Postman collection
+- [cardsense-api](https://github.com/WaddleStudio/cardsense-api) — 推薦 API、疊加優惠計算、benefit plan / subcategory、Postman collection
 - [cardsense-web](https://github.com/WaddleStudio/cardsense-web) — 前端展示、推薦表單、卡片目錄、深色模式
 - [CardSense Demo Spec](./CardSense-Demo-Spec.md) — `/calc` 社群入口頁詳細規格
 - [CardSense Spec](./specs/spec-cardSense.md) — 完整專案規格說明書
@@ -385,4 +378,4 @@ npm run dev                                       # http://localhost:5173
 - [推薦引擎增強實作計畫](./specs/cardsense-plans/2026-03-28-recommendation-enhancement-impl.md) — 10-task 實作計畫
 - [API Implementation Checklist](https://github.com/WaddleStudio/cardsense-api/blob/master/IMPLEMENTATION_CHECKLIST.md) — API 待辦與遷移時機
 
-*Last updated: 2026-03-30*
+*Last updated: 2026-04-04*
