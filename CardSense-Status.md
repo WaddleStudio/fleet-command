@@ -377,3 +377,16 @@ npm run dev                                       # http://localhost:5173
 - [API Implementation Checklist](https://github.com/WaddleStudio/cardsense-api/blob/master/IMPLEMENTATION_CHECKLIST.md) — API 待辦與遷移時機
 
 *Last updated: 2026-04-05*
+## Update Addendum (2026-04-05)
+
+### Newly Completed
+
+- Fixed card-catalog eligibility aggregation in API so card-level filtering no longer depends on the first promotion row only.
+- Fixed extractor output so business / profession-specific cards emit the correct promotion-level `eligibilityType` instead of falling back to `GENERAL`.
+- Expanded benefit-plan subcategory coverage for benefit-switching cards, especially Cathay CUBE, Taishin Richart, and ESUN Unicard.
+- Refreshed extractor data and redeployed the local DB snapshot used by `cardsense-api`.
+
+### Notes
+
+- Card catalog filtering accuracy now depends on both API-side card eligibility aggregation and extractor-side promotion eligibility tagging.
+- If benefit-plan or eligibility heuristics change again, rerunning `refresh_and_deploy.py` is required before frontend behavior will reflect the fix.

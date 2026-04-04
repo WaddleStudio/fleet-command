@@ -536,3 +536,21 @@ track('calc_cta_click', { target: 'recommend' | 'cards' | 'api_docs' });
 *Owner: Alan | Created: 2026-03-27*
 *預估總工時：6-8 小時（分 3 個 sprint）*
 *前提：現有 /v1/cards 和 /v1/recommendations/card API 正常運作*
+## Demo Addendum (2026-04-05)
+
+### Recommendation Labels
+
+- Demo outputs should prefer `bankName + cardName` in ranking and summary areas when space is limited.
+- Long card names should be truncated in-chart, while keeping the full name available via tooltip / title text where possible.
+- The same naming strategy should stay consistent across ranking chart, best/worst summary, and share copy/image.
+
+### Eligibility Filter Expectations
+
+- Card catalog demo behavior now assumes `/v1/cards` can filter by `eligibilityType`.
+- Expected values are `GENERAL`, `PROFESSION_SPECIFIC`, and `BUSINESS`.
+- Demo verification should include at least one business-card and one profession-specific-card case after each DB refresh.
+
+### Benefit Plan / Subcategory Expectations
+
+- Benefit-switching cards should no longer be demonstrated as mostly `GENERAL` subcategory rows when plan/category context is known.
+- Demo checks should prioritize Cathay CUBE, Taishin Richart, and ESUN Unicard.
