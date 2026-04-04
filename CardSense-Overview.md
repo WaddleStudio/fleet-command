@@ -38,7 +38,7 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 | cardsense-contracts | ✅ 完成 | Promotion / Recommendation schema 穩定，含 Stackability metadata |
 | cardsense-extractor | ✅ 核心完成 | 5 家銀行 real extractor（E.SUN / Cathay / Taishin / Fubon / CTBC）、JSONL + SQLite + Supabase sync |
 | cardsense-api | ✅ 核心完成 | 情境推薦、疊加優惠計算（STACK_ALL_ELIGIBLE）、break-even、benefit plan 權益切換、subcategory 過濾、scope 過濾、Supabase 讀取 |
-| cardsense-web | ✅ MVP Live | 推薦頁 `/recommend`、卡片目錄 `/cards`、卡片詳情 `/cards/:cardCode`、`/calc` 年度損失社群入口頁 |
+| cardsense-web | ✅ MVP Live | 推薦頁、卡片目錄、卡片詳情、`/calc` 社群入口頁、FilterChip 設計系統、touch target token、RWD + a11y 最佳化 |
 | 資料庫遷移 | ✅ 完成 | Extractor → SQLite → Supabase sync（psycopg2）；API prod 從 Supabase 讀取 |
 | 銀行擴充 | ✅ Phase 1 完成 | 5 家銀行全部上線（E.SUN / Cathay / Taishin / Fubon / CTBC） |
 | 權益切換 | ✅ 核心完成 | Extractor plan inference + API DecisionEngine 自動選擇最佳 plan；支援 CATHAY CUBE（7 plans）、TAISHIN RICHART |
@@ -110,10 +110,14 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 ### Phase 5：前端優化與成長
 
+- ✅ 行動裝置 RWD 全面修復（header 溢出、touch target 合規、tap delay 消除）
+- ✅ FilterChip 共用元件 + touch target sizing tokens（`--spacing-touch` / `--spacing-touch-sm`）
+- ✅ 無障礙改善（aria-label、aria-expanded、prefers-reduced-motion）
+- ✅ CardsPage 進階篩選可收合
+- ✅ CardDetailPage 推薦路由修正
 - `/calc` 社群投放（PTT、Dcard、Facebook 信用卡社團）
 - 分享圖片品質優化
 - 追蹤埋點完善（PostHog / Vercel Analytics）
-- 進階功能：break-even 視覺化、多優惠堆疊展示
 
 ### Phase 6：Skill 整理
 

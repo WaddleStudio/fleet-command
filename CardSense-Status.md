@@ -74,33 +74,31 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 ### cardsense-web（最活躍）
 
-**Latest**: `92c56c6` — fix: prevent logo and card title overflow on narrow screens (2026-03-24)
+**Latest**: `f04ea6d` — refactor: extract FilterChip component and unify touch target tokens (2026-04-04)
 
 **近期功能迭代**：
-- `89aeda3` fix: remaining UX issues + break-even analysis display
-- `802ecf0` feat: fintech UI redesign + UX bug fixes
-- `c5ab6c8` fix: prevent badge and card content overflow on narrow screens
-- `4f60279` fix: cashback display, horizontal overflow, and theme redesign
-- `2c561a3` feat: UI optimization — mobile RWD, form UX, dark mode, animations, card detail page
-- `59a814d` Upgrade recommendation results UI and card catalog filters
+- `f04ea6d` refactor: extract FilterChip component and unify touch target tokens
+- `8819dbc` fix: improve mobile responsiveness, touch targets, and accessibility
+- `e6f229a` feat: clarify strict subcategory comparison in web UI
+- `19a33b8` feat: add subcategory context to recommendation flows
+- `b441466` Add anomaly warning for cashback rates exceeding 20%
+- `4aced72` Add Vercel analytics
 
 **已完成功能**：
-- 情境式推薦表單（金額、類別、通路）
+- `/calc` 年度損失社群入口頁（計算機風格金額輸入、消費類別/場景選擇、回饋排名 bar chart、年度損失動畫計數器、Canvas 分享圖片生成）
+- 情境式推薦表單（金額、類別、子類別場景、通路）
 - 疊加優惠計算（自動計算所有可疊加優惠總和）
 - 優惠明細展開（逐一列出回饋金額、條件、有效期）
 - 損益平衡分析（疊加模式自動計算兩卡損益平衡消費點）
-- 卡片目錄頁（多維篩選：銀行、資格類型、優惠類別、年費區間、推薦範圍）
-- 卡片詳情頁（基本資料 + 優惠資訊依類別分組顯示 + 權益切換提醒）
+- 卡片目錄頁（多維篩選：銀行、資格類型、優惠類別、年費區間、推薦範圍；可收合進階篩選）
+- 卡片詳情頁（基本資料 + 優惠資訊依類別分組顯示 + 權益切換提醒 + 一鍵跳轉推薦）
 - 深色模式（跟隨系統偏好，可手動切換）
-- 行動裝置 RWD 最佳化
+- 行動裝置 RWD 最佳化（響應式 header、touch target 合規 44/36px、300ms tap delay 消除）
 - Fintech 風格 UI（OKLCH 語意色彩 token）
 - API 連線狀態指示
-
-**下一個前端 slice（已定 spec）**：
-- `/calc` 作為社群傳播入口，用「刷錯卡的年度損失」切入陌生流量
-- 不新增 API endpoint，重用 `GET /v1/cards` 與 `POST /v1/recommendations/card`
-- 結果頁聚焦 best vs worst 差額、年度損失、分享按鈕與 CTA 導流到 `/` / `/cards`
-- 詳細規格收斂於 `CardSense-Demo-Spec.md`
+- 無障礙（aria-label、aria-expanded、prefers-reduced-motion）
+- 共用 FilterChip 元件 + touch target sizing tokens（`--spacing-touch` / `--spacing-touch-sm`）
+- 回饋率超過 20% 異常警告
 
 **技術棧**：React 19 / TypeScript 5.9 / Vite 8 / TailwindCSS 4 / React Router 7 / TanStack Query 5 / Radix UI + shadcn/ui / Lucide
 
@@ -378,4 +376,4 @@ npm run dev                                       # http://localhost:5173
 - [推薦引擎增強實作計畫](./specs/cardsense-plans/2026-03-28-recommendation-enhancement-impl.md) — 10-task 實作計畫
 - [API Implementation Checklist](https://github.com/WaddleStudio/cardsense-api/blob/master/IMPLEMENTATION_CHECKLIST.md) — API 待辦與遷移時機
 
-*Last updated: 2026-04-04*
+*Last updated: 2026-04-05*
