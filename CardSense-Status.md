@@ -51,8 +51,8 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 |------|------|------|
 | cardsense-contracts | ✅ 完成 | Promotion / Recommendation / Stackability schema 穩定，含 subcategory 欄位 |
 | cardsense-extractor | ✅ 核心完成 | E.SUN + Cathay + TAISHIN + FUBON + CTBC real extractor、subcategory inference、JSONL + SQLite 匯入、refresh_and_deploy |
-| cardsense-api | ✅ 核心完成 + 已部署 | 情境推薦、疊加優惠計算、break-even、subcategory 場景過濾、scope/eligibilityType/通路 condition 匹配；Render 上線 |
-| cardsense-web | ✅ MVP 完成 + 已部署 | 推薦表單 + 卡片目錄 + SubcategoryGrid 場景選擇 + `/calc` 社群入口頁 + 深色模式 + RWD + fintech UI |
+| cardsense-api | ✅ 核心完成 + 已部署 | 情境推薦、疊加優惠計算、break-even、subcategory 場景過濾、scope/eligibilityType/通路 condition 匹配；指定 subcategory 時會一起比較 matching scene + GENERAL；Render 上線 |
+| cardsense-web | ✅ MVP 完成 + 已部署 | 推薦表單 + 卡片目錄 + SubcategoryGrid 場景選擇 + `/calc` 社群入口頁 + merchantName 輸入/提示 + 深色模式 + RWD + fintech UI |
 | 資料庫遷移 | ✅ 完成 | SQLite → Supabase sync 已上線；API prod 從 Supabase 讀取 |
 | 銀行擴充 | 🔄 進行中 | TAISHIN ✅ FUBON ✅ CTBC ✅ 完成（5 銀行 101 張卡 452 筆優惠）、下一批：MEGA / SINOPAC |
 | Auth / Rate Limiting | ⏳ 未開始 | Phase 2 商業化時實作 |
@@ -129,6 +129,7 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 | `ECOMMERCE_PLATFORM` | 電商平台限定 | MOMO, SHOPEE, PCHOME |
 | `RETAIL_CHAIN` | 實體通路限定 | COSTCO, PXMART, CARREFOUR |
 | `PAYMENT_PLATFORM` | 支付平台限定 | LINE_PAY, JKOPAY, TAIWAN_PAY |
+| `MERCHANT` | 商家名稱限定 | CHATGPT, CLAUDE, UBER_EATS, CHINA_AIRLINES |
 
 **推薦排序（確定性五層 tiebreaker）**：
 1. effective return 降序
