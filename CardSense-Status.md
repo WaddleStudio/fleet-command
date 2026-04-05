@@ -390,3 +390,18 @@ npm run dev                                       # http://localhost:5173
 
 - Card catalog filtering accuracy now depends on both API-side card eligibility aggregation and extractor-side promotion eligibility tagging.
 - If benefit-plan or eligibility heuristics change again, rerunning `refresh_and_deploy.py` is required before frontend behavior will reflect the fix.
+# 2026-04-05 Update
+
+Recent progress relevant to benefit-plan cards:
+
+- `CATHAY_CUBE` now has extractor-native, merchant-aware cluster promotions
+- API recommendation now supports conservative CUBE tier handling with explicit runtime override
+- frontend recommendation UI now supports merchant input and CUBE tier selection
+- Supabase rollout can now be scoped to a single bank or card, avoiding accidental cross-card sync
+- the bank promo review skill has been upgraded to reflect the full cross-repo workflow
+
+Canonical references for this area:
+
+- `fleet-command/CardSense-Benefit-Plan-Implementation-Plan.md`
+- `fleet-command/CardSense-Bank-Promo-Review-Workflow.md`
+- `cardsense-extractor/skills/cardsense-bank-promo-review`

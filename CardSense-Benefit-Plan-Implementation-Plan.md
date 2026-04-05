@@ -1,165 +1,172 @@
 # CardSense Benefit-Plan Implementation Plan
-Last updated: 2026-04-04
+Last updated: 2026-04-05
 
 ## Current State
 
-We completed an initial pass focused on benefit-plan switching cards, especially Cathay CUBE, and created a reusable review skill.
+The first real end-to-end benefit-plan implementation is now in place for `CATHAY_CUBE`.
 
-Delivered so far:
+Completed:
 
-- CUBE plan descriptions updated in API `benefit-plans.json`
-- Cathay `category -> planId` mapping corrected in extractor
-- subcategory coverage expanded for richer CUBE scenarios
-- extractor tests added for new mapping and subcategory behavior
-- a reusable skill added under `cardsense-extractor/skills/cardsense-bank-promo-review`
-- local Codex skill path linked to the repo-managed skill
+- API `benefit-plans.json` updated with cleaner CUBE plan descriptions
+- extractor `category -> planId` mapping corrected for CUBE
+- canonical `subcategory` taxonomy added in `cardsense-contracts`
+- CUBE extractor upgraded from coarse plan promos to merchant-aware cluster promos
+- CUBE runtime tier handling added to API recommendation logic
+- CUBE-only scoped Supabase sync implemented
+- frontend recommendation UI updated with merchant input, CUBE tier selector, and clearer condition display
+- reusable review skill updated to reflect the current implementation pattern
 
-## Key Product Decision
+## Proven Pattern
 
-When plan tiers are unknown at runtime, recommendation should default conservatively.
+The current best-known implementation pattern for switching cards is:
 
-Current recommendation:
+1. keep top-level `category` stable
+2. add meaningful `subcategory`
+3. model stable clusters as promotions
+4. attach merchant-level conditions inside those cluster promos
+5. keep runtime-only state explicit in request payload
+6. roll out with scoped sync when only one card is production-ready
 
-- default to `Level 1`
-- expose `Level 2 / Level 3` as explicit user state or future enhancement
+For `CATHAY_CUBE`, that means:
 
-## Main Gaps
+- `AI_TOOL` promo with merchants like `CHATGPT`, `CLAUDE`
+- `SUPERMARKET` promo with merchants like `PXMART`, `CARREFOUR`
+- `AIRLINE` promo with merchants like `CHINA_AIRLINES`, `EVA_AIR`
+- runtime tier defaulting conservatively to `LEVEL_1`
 
-### 1. Runtime benefit tier state
+## Current Product Decisions
 
-Current schemas do not cleanly represent:
+### Tier default policy
 
-- CUBE `Level 1 / 2 / 3`
-- user-level unlock or qualification state
-- month-end plan resolution logic for cards like Unicard
+When tier state is unknown at runtime, recommendation should default conservatively.
 
-### 2. Merchant-slot / user-plan configuration
+Current policy:
 
-Current request/runtime model does not represent:
+- `CATHAY_CUBE` defaults to `LEVEL_1`
+- `LEVEL_2` and `LEVEL_3` require explicit request/runtime state
 
-- Unicard `任意選` merchant picks
-- paid/unlocked `UP選`
-- other user-configured plan parameters
+### Merchant modeling policy
 
-### 3. Rail / MCC / routing-sensitive rules
+Prefer:
 
-Current normalized promotion conditions are still too generic for some Richart-like rules:
+- cluster promo plus merchant conditions
 
-- wallet/payment rail
-- MCC-based recognition
+Do not immediately create one promo row per merchant unless the bank benefit truly behaves that way.
+
+### Rollout policy
+
+If only one card is ready, prefer scoped rollout.
+
+Current working example:
+
+- `--sync-bank CATHAY --sync-card CATHAY_CUBE`
+
+## What Is Now Complete for CUBE
+
+### Extractor
+
+- plan-aware extraction
+- subcategory-aware extraction
+- merchant-aware conditions
+- non-plan promo tagging guardrails
+
+### API runtime
+
+- plan-aware recommendation
+- merchant-aware condition matching
+- conservative tier fallback
+- explicit `benefitPlanTiers` request support
+
+### Frontend
+
+- `merchantName` input
+- merchant suggestion chips
+- CUBE tier selector
+- clearer result condition badges
+- active plan display remains available
+
+### Data pipeline
+
+- SQLite re-import validated
+- CUBE-only Supabase sync validated
+- no cross-card contamination during scoped rollout
+
+## Remaining Gaps
+
+### 1. Runtime plan-state beyond tiers
+
+Still missing for future cards:
+
+- month-end final plan state
+- merchant-slot selection
+- unlock or subscription state
+
+Priority card:
+
+- `ESUN_UNICARD`
+
+### 2. Rail and routing-sensitive rules
+
+Still not fully modeled:
+
+- wallet or payment rail
+- MCC-like semantics
 - transaction country
-- foreign-currency vs domestic settlement
-- direct booking vs third-party booking
+- billing currency
+- direct merchant vs third-party route
+
+Priority card:
+
+- `TAISHIN_RICHART`
+
+### 3. Frontend product refinement
+
+Still worth improving:
+
+- smarter merchant suggestions by selected category and subcategory
+- better explanation copy for tier assumptions
+- richer condition grouping in result cards
 
 ## Recommended Implementation Order
 
-### Phase 1: Stabilize review workflow
+### Phase 1: Keep CUBE stable
 
-Goal:
+- keep CUBE extractor-native output as the baseline
+- use CUBE as the reference implementation for switching cards
+- avoid reintroducing curated-only shortcuts where extractor-native output now exists
 
-- make future bank reviews repeatable and low-friction
+### Phase 2: Structured Unicard review
 
-Tasks:
-
-- use `cardsense-bank-promo-review` for all future switching-card reviews
-- produce each future review using the skill template
-- classify every new rule into `RECOMMENDABLE`, `CATALOG_ONLY`, or `FUTURE_SCOPE`
-
-### Phase 2: Formalize runtime tier support
-
-Goal:
-
-- support cards whose reward depends on user qualification tier
-
-Suggested changes:
-
-- add request/runtime field such as `benefitPlanLevel` or `userBenefitTier`
-- support conservative fallback when omitted
-- update recommendation logic to apply tier-specific rates safely
-
-Priority target:
-
-- Cathay CUBE
-
-### Phase 3: Formalize user-configured plan state
-
-Goal:
-
-- support cards whose plan outcome depends on user configuration
-
-Suggested changes:
-
-- add request/runtime support for selected merchant slots
-- add request/runtime support for paid/unlocked plan state
-- decide how to model month-end final plan resolution
-
-Priority target:
-
-- E.SUN Unicard
-
-### Phase 4: Expand condition modeling
-
-Goal:
-
-- improve deterministic compatibility for routing-sensitive cards
-
-Suggested additions:
-
-- MCC-like condition types
-- payment-rail / wallet condition types
-- transaction-country / billing-currency condition types
-- direct-merchant vs third-party-platform condition types
-
-Priority target:
-
-- Taishin Richart
-
-## Near-Term Card Priorities
-
-### Cathay CUBE
-
-Next step:
-
-- replace curated/approximate pieces with extractor-native output where possible
-- decide whether to keep `Level 1` default in production until tier state exists
-
-### E.SUN Unicard
-
-Next step:
-
-- perform a full structured review using the new skill template
+- use the review skill template
 - separate catalog compatibility from runtime recommendation compatibility
+- identify which parts require merchant-slot or month-end state
 
-### Taishin Richart
+### Phase 3: Structured Richart review
 
-Next step:
+- use the review skill template
+- identify which parts are safe cluster promos
+- isolate rail- or MCC-sensitive rules that should remain `CATALOG_ONLY`
 
-- perform a full structured review using the new skill template
-- identify which plan rules are genuinely deterministic versus payment-recognition-sensitive
+### Phase 4: Runtime-state schema design
+
+- decide whether to add general plan-state request fields
+- model merchant-slot configuration
+- model month-end plan resolution when needed
 
 ## Output Rules For Future Reviews
 
-Each future benefit-plan review should answer:
+Each future switching-card review should answer:
 
 1. Is the plan catalog compatible now?
 2. Are the base promotions recommendable now?
-3. What runtime state is missing?
-4. What taxonomy or mapping changes are needed?
-5. Can extractor-native output handle it, or is curated JSONL temporarily needed?
+3. Are merchant-aware cluster promos enough?
+4. What runtime state is missing?
+5. What taxonomy, mapping, or frontend changes are needed?
+6. Is a scoped rollout required?
 
-## Canonical Skill Location
+## Canonical References
 
-Repo-managed skill:
-
-- `cardsense-extractor/skills/cardsense-bank-promo-review`
-
-Local installed skill path is linked to the repo version:
-
-- `%USERPROFILE%\\.codex\\skills\\cardsense-bank-promo-review`
-
-## Immediate Next Actions
-
-1. Run a full `review-output-template` review for Unicard
-2. Run a full `review-output-template` review for Richart
-3. Design runtime tier field for CUBE
-4. Decide whether to introduce plan-state fields before implementing Unicard recommendation logic
+- Skill:
+  - `cardsense-extractor/skills/cardsense-bank-promo-review`
+- Workflow doc:
+  - `fleet-command/CardSense-Bank-Promo-Review-Workflow.md`

@@ -182,3 +182,17 @@ cd cardsense-contracts
 - [cardsense-web README](../cardsense-web/README.md) — 前端展示、技術棧、部署設定
 - [API Implementation Checklist](../cardsense-api/IMPLEMENTATION_CHECKLIST.md) — API 待辦與前端 / 資料庫遷移時機
 - [CardSense Demo Spec](./CardSense-Demo-Spec.md) — `/calc` 年度損失入口頁詳細規格
+# 2026-04-05 Snapshot
+
+Benefit-plan implementation has moved beyond basic plan metadata and now includes:
+
+- extractor-native `CATHAY_CUBE` plan parsing
+- merchant-aware cluster promotions
+- conservative CUBE tier runtime handling
+- frontend merchant and CUBE-tier inputs
+- card-scoped Supabase rollout support
+
+For the cleanest current references, prefer:
+
+- `fleet-command/CardSense-Benefit-Plan-Implementation-Plan.md`
+- `fleet-command/CardSense-Bank-Promo-Review-Workflow.md`
