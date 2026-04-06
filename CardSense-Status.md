@@ -171,18 +171,18 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 ### cardsense-extractor
 
-**Latest**: `98b1054` — feat: review taishin card promos
+**Latest**: `a1f02ca` — feat: add flexible CTBC targeted extraction and extract-ctbc skill
 
-**近期��能迭代**：
+**近期功能迭代**：
+- `a1f02ca` feat: add flexible CTBC targeted extraction and extract-ctbc skill
+- `d6920fa` feat: implement general reward promotion expansion across multiple extractors
+- `d063574` Add catalog review and bank-wide supplement rules
 - `98b1054` feat: review taishin card promos
 - `4f663ed` fix: review and sync CTBC promo cleanup
 - `5a113d3` Add missing Formosa card promotions
 - `228f80c` Review and clean Fubon promo extraction
 - `79e541b` Refine Cathay non-CUBE promo review rules
 - `904667e` Document bank promo review and payment cleanup workflow
-- `432bed2` Tighten payment condition inference and clean ESUN sync
-- `9e3a8f3` Mark Richart promos as tier sensitive
-- `f3f953d` Split Unicard mixed promo clusters into specific subcategories
 
 **專案結構**：
 ```
@@ -204,6 +204,7 @@ jobs/
 ├── import_jsonl_to_db.py      # JSONL → SQLite importer
 ├── run_real_bank_job.py       # shared runner for bank extractors
 ├── run_{esun,cathay,taishin,fubon,ctbc}_real_job.py
+├── run_ctbc_targeted.py       # CTBC targeted extraction (specific cards by slug)
 ├── analyze_jsonl_output.py    # quality inspection
 sql/
 └── cardsense_schema.sql       # SQLite schema
