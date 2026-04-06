@@ -15,7 +15,7 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 | cardsense-api | 情境推薦 REST API | Java 21 / Spring Boot / SQLite / Supabase / Maven | Render | [WaddleStudio/cardsense-api](https://github.com/WaddleStudio/cardsense-api) |
 | cardsense-web | 前端展示 | React 19 / TypeScript 5.9 / Vite 8 / shadcn/ui / Tailwind CSS 4 | Vercel | [WaddleStudio/cardsense-web](https://github.com/WaddleStudio/cardsense-web) |
 
-> 所有 repo 集中於 `D:/Projects/cardsense-workspace/` 統一管理。
+> 所有 repo 集中於 workspace 根目錄統一管理（無 git 版控，各 repo 獨立版控）。
 
 ## 架構總覽
 
@@ -74,24 +74,29 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 ### cardsense-web（最活躍）
 
-**Latest**: `f04ea6d` — refactor: extract FilterChip component and unify touch target tokens (2026-04-04)
+**Latest**: `e3364b7` — Improve cards catalog page: bank colors, highlights, better empty state
 
 **近期功能迭代**：
-- `f04ea6d` refactor: extract FilterChip component and unify touch target tokens
-- `8819dbc` fix: improve mobile responsiveness, touch targets, and accessibility
-- `e6f229a` feat: clarify strict subcategory comparison in web UI
-- `19a33b8` feat: add subcategory context to recommendation flows
-- `b441466` Add anomaly warning for cashback rates exceeding 20%
-- `4aced72` Add Vercel analytics
+- `e3364b7` Improve cards catalog page: bank colors, highlights, better empty state
+- `2cd5ac3` Add WaddleStudio credit to footer
+- `21183d8` Hide generic mobile pay option from payment filters
+- `2a7e3a5` Show benefit tier badges for Richart
+- `1cb1f4f` Improve UI/UX: collapsible switching cards, merchant picker, accessibility fixes
+- `a748b3d` Align switching card plan labels with official names
+- `1760995` Add switching card state controls to recommendation UIs
+- `c4cf8cf` Add shopping and donation subcategory labels
+- `de4ab51` Refine travel platform classification
+- `85cb93b` Add payment method selection to calculator
 
 **已完成功能**：
 - `/calc` 年度損失社群入口頁（計算機風格金額輸入、消費類別/場景選擇、回饋排名 bar chart、年度損失動畫計數器、Canvas 分享圖片生成）
-- 情境式推薦表單（金額、類別、子類別場景、通路）
+- 情境式推薦表單（金額、類別、子類別場景、通路、支付方式）
 - 疊加優惠計算（自動計算所有可疊加優惠總和）
 - 優惠明細展開（逐一列出回饋金額、條件、有效期）
 - 損益平衡分析（疊加模式自動計算兩卡損益平衡消費點）
-- 卡片目錄頁（多維篩選：銀行、資格類型、優惠類別、年費區間、推薦範圍；可收合進階篩選）
+- 卡片目錄頁（多維篩選：銀行、資格類型、優惠類別、年費區間、推薦範圍；可收合進階篩選；銀行品牌色 + 精選標記 + 空狀態優化）
 - 卡片詳情頁（基本資料 + 優惠資訊依類別分組顯示 + 權益切換提醒 + 一鍵跳轉推薦）
+- 權益切換卡支援（可折疊切換卡狀態控制、merchant picker、benefit tier badges、官方方案名稱對齊）
 - 深色模式（跟隨系統偏好，可手動切換）
 - 行動裝置 RWD 最佳化（響應式 header、touch target 合規 44/36px、300ms tap delay 消除）
 - Fintech 風格 UI（OKLCH 語意色彩 token）
@@ -99,20 +104,32 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 - 無障礙（aria-label、aria-expanded、prefers-reduced-motion）
 - 共用 FilterChip 元件 + touch target sizing tokens（`--spacing-touch` / `--spacing-touch-sm`）
 - 回饋率超過 20% 異常警告
+- WaddleStudio footer credit
 
 **技術棧**：React 19 / TypeScript 5.9 / Vite 8 / TailwindCSS 4 / React Router 7 / TanStack Query 5 / Radix UI + shadcn/ui / Lucide
 
 ### cardsense-api
 
-**Latest**: `158243e` — fix: cap reward to never exceed transaction amount + refresh DB (2026-03-23)
+**Latest**: `494129f` — Fix Supabase prepared statement pooler issue
+
+**近期功能迭代**：
+- `494129f` Fix Supabase prepared statement pooler issue
+- `c4c375f` Add Richart benefit level runtime handling
+- `609470a` Add active plan runtime state to recommendation engine
+- `5f275ef` Tighten scenario ranking for scoped promotions
+- `ded3278` Refine travel platform classification
+- `b587d4f` Support payment method aware recommendation matching
+- `a2c1d25` fix: include general promos in subcategory scene matching
+- `81acccc` feat: support cube benefit tiers at recommendation time
 
 **核心實作**：
-- `DecisionEngine`（736+ 行）— 確定性推薦邏輯，scenario 解析、promotion 過濾、回饋計算、排序
+- `DecisionEngine`（736+ 行）— 確定性推薦邏輯，scenario 解析、promotion 過濾、回饋計算、排序；支援 subcategory 場景過濾、payment method 匹配、benefit tier 運行時覆寫
 - `RewardCalculator` — PERCENT / FIXED / POINTS 回饋計算，封頂邏輯
 - `CatalogService` — 卡片目錄查詢，scope-aware（RECOMMENDABLE / CATALOG_ONLY / FUTURE_SCOPE）
 - `SqlitePromotionRepository` / `SupabasePromotionRepository` — 支援 local SQLite 與 prod Supabase 兩種 promotion 來源
 - `CorsConfig` — 前端跨域存取
 - `ApiKeyFilter` — API Key 認證（public endpoints 免驗）
+- `BenefitPlan` entity + `JsonBenefitPlanRepository` — benefit plan 運行時選擇，active plan runtime state
 
 **比較模式**：固定使用疊加優惠計算（`STACK_ALL_ELIGIBLE`），已移除 `BEST_SINGLE_PROMOTION` 模式（其結果為疊加模式的子集，無獨立用途）。
 
@@ -153,7 +170,18 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 ### cardsense-extractor
 
-**Latest**: `32bce41` — feat: add Playwright fetcher, CTBC runner, Fubon name cleaning (2026-03-24)
+**Latest**: `98b1054` — feat: review taishin card promos
+
+**近期��能迭代**：
+- `98b1054` feat: review taishin card promos
+- `4f663ed` fix: review and sync CTBC promo cleanup
+- `5a113d3` Add missing Formosa card promotions
+- `228f80c` Review and clean Fubon promo extraction
+- `79e541b` Refine Cathay non-CUBE promo review rules
+- `904667e` Document bank promo review and payment cleanup workflow
+- `432bed2` Tighten payment condition inference and clean ESUN sync
+- `9e3a8f3` Mark Richart promos as tier sensitive
+- `f3f953d` Split Unicard mixed promo clusters into specific subcategories
 
 **專案結構**：
 ```
@@ -196,7 +224,7 @@ sql/
 
 ### cardsense-contracts
 
-**Latest**: `b0589b3` — docs: rewrite README with unified structure (2026-03-20)
+**Latest**: `a976614` — docs: add canonical subcategory taxonomy
 
 **Schema 結構**：
 ```
@@ -235,7 +263,7 @@ taxonomy/      → category / channel / frequency taxonomy
 
 ---
 
-## 已知限制（截至 2026-03-23）
+## 已知限制（截至 2026-04-06）
 
 **API**：
 - SQLite repo 從 `raw_payload_json` 還原 `stackability` metadata，尚未拆成顯式欄位
@@ -256,36 +284,41 @@ taxonomy/      → category / channel / frequency taxonomy
 
 ## 待辦工作路線圖（Roadmap）
 
-### Phase 1：新銀行擴充 + Extractor 能力提升
+### Phase 1：新銀行擴充 + Extractor 能力提升 ✅
 
-**新銀行優先序**：TAISHIN ✅ → FUBON ✅ → CTBC ✅（JSON API 繞過 WAF，Playwright 抓 detail 頁）
+5 家銀行全部上線（E.SUN / Cathay / Taishin / Fubon / CTBC），101 張卡 452+ 筆優惠。
 
-- 每家銀行先分析官網結構，判斷適用 HTML 抽取或 JSON API
-- 復用 `promotion_rules.py` 與 `run_real_bank_job.py` 共用層
-- 每家銀行作為獨立 extractor 檔案（如 `ctbc_real.py`）
-- 完成一家就匯入 SQLite 並跑 API smoke test，不等全部做完
+- 每家銀行獨立 extractor 檔案，復用 `promotion_rules.py` + `run_real_bank_job.py`
+- Playwright + Cloudflare Browser Rendering 支援反爬蟲銀行
+- `sectioned_page.py` section detection 強化
+- 各銀行 fixture 確保 heuristic 變更不破壞既有結果
+- 全銀行 promo review 完成（Taishin / CTBC / Fubon / Cathay non-CUBE）：payment condition 清理、subcategory 細化、benefit plan 對齊
 
-**Extractor 能力提升**：
-- 強化 `sectioned_page.py` 的 section detection，支援更多 heading 模式
-- 在 `promotion_rules.py` 增加更多 category/channel signal 權重
-- 為每家新銀行建立 fixture 檔案，確保 heuristic 變更不破壞既有銀行
+**API 已完成的增強**：
+- subcategory 場景過濾（選 subcategory 時 matching scene + GENERAL 一起排名）
+- payment method aware recommendation matching
+- benefit tier runtime handling（CUBE Level 1/2/3、Richart tier）
+- active plan runtime state
+- Supabase prepared statement pooler 修正
 
-**API 下一步**：
+**尚未開始**：
 - `stackability` 拆成顯式 SQLite 欄位
-- 擴充 ESUN / CATHAY stacked-promotion 整合測試 fixtures
-- 加入 promotion 排除原因的可解釋性說明
-- 定義 `POINTS` 型別的銀行別點數折現規則
+- `POINTS` 型別銀行別點數折現規則
+- promotion 排除原因可解釋性說明
 
-### Phase 2：商業化準備
+### Phase 2：商業化準備（部分完成）
 
-**前提**：Phase 1 達到 5 家銀行 + 前端穩定。
+**已完成**：
+- ✅ `/calc` 傳播入口頁已上線（計算機風格 UI、分享圖片生成）
+- ✅ 前端 break-even 視覺化、多優惠堆疊展示
+- ✅ 免責聲明（每筆 API 回應包含 disclaimer）
 
-- `cardsense-web` 新增 `/calc` 傳播入口頁，驗證分享率與推薦頁導流率
+**未開始**：
 - API Key 認證 + Rate Limiting
-- 免責聲明 + 聯盟行銷連結揭露
+- 聯盟行銷連結揭露
 - B2B 客戶 onboarding 流程
 - Stripe Billing 整合（API 訂閱制）
-- 前端進階功能：break-even 視覺化 ✅、多優惠堆疊展示 ✅
+- `/calc` 社群投放（PTT、Dcard、Facebook 信用卡社團）
 
 ### Phase 3：資料庫遷移（SQLite → Supabase）✅
 
@@ -385,62 +418,14 @@ npm run dev                                       # http://localhost:5173
 - [推薦引擎增強實作計畫](./specs/cardsense-plans/2026-03-28-recommendation-enhancement-impl.md) — 10-task 實作計畫
 - [API Implementation Checklist](https://github.com/WaddleStudio/cardsense-api/blob/master/IMPLEMENTATION_CHECKLIST.md) — API 待辦與遷移時機
 
-*Last updated: 2026-04-05*
-## Update Addendum (2026-04-05)
+*Last updated: 2026-04-06*
 
-### Newly Completed
+## 備註
 
-- Fixed card-catalog eligibility aggregation in API so card-level filtering no longer depends on the first promotion row only.
-- Fixed extractor output so business / profession-specific cards emit the correct promotion-level `eligibilityType` instead of falling back to `GENERAL`.
-- Expanded benefit-plan subcategory coverage for benefit-switching cards, especially Cathay CUBE, Taishin Richart, and ESUN Unicard.
-- Refreshed extractor data and redeployed the local DB snapshot used by `cardsense-api`.
-
-### Notes
-
-- Card catalog filtering accuracy now depends on both API-side card eligibility aggregation and extractor-side promotion eligibility tagging.
-- If benefit-plan or eligibility heuristics change again, rerunning `refresh_and_deploy.py` is required before frontend behavior will reflect the fix.
-
-### Benefit-Plan Review Log
-
-Latest focused cleanup on `ESUN_UNICARD` and `TAISHIN_RICHART`:
-
-- Updated extractor heuristics so `ESUN_UNICARD` no longer treats theme-park offers as generic `OTHER` rows when official page wording clearly indicates `樂園` / `遊樂園`
-- Expanded benefit-plan subcategory hints for `ESUN_UNICARD` and `TAISHIN_RICHART`, including `SUPERMARKET`, `DEPARTMENT`, `TRAVEL_PLATFORM`, and `GAS_STATION`
-- Tightened Richart plan inference so travel pages are less likely to be misclassified as `PAY` merely because page copy also mentions `LINE Pay` / `台新Pay`
-- Re-ran local `ESUN` extraction and refreshed SQLite with:
-  `uv run python jobs/refresh_and_deploy.py --banks ESUN --no-supabase --db data/cardsense.db`
-
-Items now confirmed fixed:
-
-- `ESUN_UNICARD` theme-park promo now lands on `ENTERTAINMENT + THEME_PARK`
-- `ESUN_UNICARD` gas / fueling promos now produce `TRANSPORT + GAS_STATION`
-- `TAISHIN_RICHART` travel-platform promos now produce `ONLINE + TRAVEL_PLATFORM`
-- `TAISHIN_RICHART` plan inference no longer lets generic payment wording override clear travel-plan signals as easily
-
-Remaining cleanup candidates worth another pass:
-
-- `ESUN_UNICARD`
-  - some `OTHER + GENERAL` rows are still present; these appear to be a mix of welcome / first-purchase / insurance / broad coupon pages and may be valid coarse rows
-  - some `TRANSPORT + GENERAL` rows remain; likely candidates are MRT / wallet ride-code / mixed transport bundles where current signals are still too broad
-- `TAISHIN_RICHART`
-  - some plan-explanation or mixed-condition rows remain semantically coarse even when `planId` is correct
-  - one or more non-travel lifestyle pages may still need a better split between `PAY`, `WEEKEND`, and catalog-only campaign treatment
-
-Recommended next step for this thread:
-
-- update Supabase only after deciding whether the remaining `ESUN_UNICARD` and `TAISHIN_RICHART` coarse rows are acceptable conservative output or should be refined further
-# 2026-04-05 Update
-
-Recent progress relevant to benefit-plan cards:
-
-- `CATHAY_CUBE` now has extractor-native, merchant-aware cluster promotions
-- API recommendation now supports conservative CUBE tier handling with explicit runtime override
-- frontend recommendation UI now supports merchant input and CUBE tier selection
-- Supabase rollout can now be scoped to a single bank or card, avoiding accidental cross-card sync
-- the bank promo review skill has been upgraded to reflect the full cross-repo workflow
-
-Canonical references for this area:
-
-- `fleet-command/CardSense-Benefit-Plan-Implementation-Plan.md`
-- `fleet-command/CardSense-Bank-Promo-Review-Workflow.md`
-- `cardsense-extractor/skills/cardsense-bank-promo-review`
+- Card catalog 篩選準確度同時依賴 API 端的 eligibility aggregation 和 extractor 端的 promotion eligibility tagging
+- 若 benefit-plan 或 eligibility heuristic 有變更，須重跑 `refresh_and_deploy.py` 才會反映到前端
+- 部分 `ESUN_UNICARD` 和 `TAISHIN_RICHART` 的 coarse rows（`OTHER + GENERAL`、混合 condition）目前保持保守輸出，待後續決定是否進一步細化
+- Benefit-plan 相關的詳細設計與工作流程見：
+  - `fleet-command/CardSense-Benefit-Plan-Implementation-Plan.md`
+  - `fleet-command/CardSense-Bank-Promo-Review-Workflow.md`
+  - `cardsense-extractor/skills/cardsense-bank-promo-review`
