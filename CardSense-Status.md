@@ -423,10 +423,11 @@ SQLite → Supabase sync 上線，API prod 從 Supabase 讀取。
 
 依優先順序：
 
-1. **執行 P1 核心審查**：逐銀行走過 148 筆 CATALOG_ONLY，判斷可提升的優惠（使用 `cardsense-bank-promo-review` skill）
-2. **Fubon targeted re-extraction**：補回 INSURANCE/INFINITE/DIGITALLIFE 3 張消失的卡
-3. **P2 聯名卡通用優惠**：評估 bank-wide promotion 擷取方案
-4. **MILES API 支援**：RewardCalculator 新增哩程回饋計算
+1. **Merchant Registry（contracts）**：統一 merchant/retailer 參考資料至 contracts repo JSON，extractor + frontend 引用，取代三處 hardcode（含 Unicard 百大通路）
+2. **執行 P1 核心審查**：逐銀行走過 148 筆 CATALOG_ONLY，判斷可提升的優惠（使用 `cardsense-bank-promo-review` skill）
+3. **Fubon targeted re-extraction**：補回 INSURANCE/INFINITE/DIGITALLIFE 3 張消失的卡
+4. **P2 聯名卡通用優惠**：評估 bank-wide promotion 擷取方案
+5. **MILES API 支援**：RewardCalculator 新增哩程回饋計算
 
 ### 後續待辦
 
@@ -436,9 +437,11 @@ SQLite → Supabase sync 上線，API prod 從 Supabase 讀取。
 | `MILES` API 支援 | RewardCalculator 新增哩程回饋計算 | — |
 | 日期 condition API 過濾 | DecisionEngine 支援 DAY_OF_MONTH / DAY_OF_WEEK 過濾 | P0.5 ✅ |
 | 擴充 COBRANDED_RETAILER_SIGNALS | 寶雅、燦坤、新光三越等聯名卡通路 | P0.5 ✅ |
-| `stackability` 顯式欄位 | 拆出 SQLite 欄位，取代 `raw_payload_json` 還原 | — |
+| Merchant Registry（contracts） | 統一 merchant/retailer 參考資料至 contracts repo JSON，取代三處 hardcode | P0.5 ✅ |
+| `stackability` 顯式欄位 | 拆出 SQLite 欄位，取代 `raw_payload_enums` 還原 | — |
 | `POINTS` 折現規則 | 銀行別點數折現率（目前各銀行點數價值不同） | — |
 | 商業化 | API Key + Rate Limiting、聯盟行銷、Stripe Billing | 資料品質達標 |
+| Taxonomy + Merchant DB 化 | category/subcategory/merchant 搬進 Supabase，提供管理後台 | 商業化階段 |
 | `/calc` 社群投放 | PTT、Dcard、Facebook 信用卡社團 | 資料品質達標 |
 | 新銀行擴充 | MEGA / FIRST / SINOPAC / TPBANK / UBOT | 既有 5 家品質穩定後 |
 
