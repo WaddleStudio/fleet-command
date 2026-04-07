@@ -102,17 +102,21 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 ### 🔥 當前優先：既有 5 家銀行資料品質提升
 
-66 張 RECOMMENDABLE 卡中 44 張（67%）僅有 1-2 筆優惠，推薦體驗不足。
+100 張卡 763 筆優惠（506 RECOMMENDABLE / 148 CATALOG_ONLY / 109 FUTURE_SCOPE）。82 張卡有 RECOMMENDABLE 優惠。
 
-- **P0：泛用回饋卡補全** — 確保全通路基本回饋（如 0.5-2.5%）在任何消費情境查詢時都能入榜與指定通路優惠競爭
-- **P1：CATALOG_ONLY 降級審查** — 51 張卡 159 筆優惠被降級，部分與資料不足有關而非真正不可推薦
-- **P2：聯名卡通用優惠補全** — 聯名卡除專屬通路外通常也享有銀行通用活動，目前未擷取
-- **P3：前端體驗配合** — 優惠少的卡片加標註、推薦結果標示回饋類型
+- **P0：泛用回饋卡補全** ✅ 完成 — RECOMMENDABLE 從 387→506（+119），decomposed scope fix、Richart plan fix、feature extractor expansion fix、HERBALIFE 分類修正
+- **P1：CATALOG_ONLY 降級審查** 🟡 ~50% — 基礎建設 + P0 連帶效果，CATALOG_ONLY 從 195→148，16 張純 CATALOG_ONLY 卡待審查
+- **P2：聯名卡通用優惠補全** ⏳ 未開始 — 聯名卡除專屬通路外通常也享有銀行通用活動，目前未擷取
+- **P3：前端體驗配合** 🟡 ~80% — promo counts、catalog hints、filter 優化已上線
+
+**➡️ 接續重點**：P1 核心審查 → Fubon targeted re-extraction → P2 bank-wide promotion → MILES API 支援
 
 ### 後續待辦
 
 | 項目 | 前置條件 |
 |------|----------|
+| Fubon targeted re-extraction | — |
+| `MILES` API 支援 | — |
 | `stackability` 顯式欄位 | — |
 | `POINTS` 銀行別折現規則 | — |
 | 商業化（API Key / Rate Limiting / Stripe） | 資料品質達標 |

@@ -54,8 +54,8 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 | cardsense-api | ✅ 核心完成 + 已部署 | 情境推薦、疊加優惠計算、break-even、subcategory 場景過濾、scope/eligibilityType/通路 condition 匹配；指定 subcategory 時會一起比較 matching scene + GENERAL；Render 上線 |
 | cardsense-web | ✅ MVP 完成 + 已部署 | 推薦表單 + 卡片目錄 + SubcategoryGrid 場景選擇 + `/calc` 社群入口頁 + merchantName 輸入/提示 + 深色模式 + RWD + fintech UI |
 | 資料庫遷移 | ✅ 完成 | SQLite → Supabase sync 已上線；API prod 從 Supabase 讀取 |
-| 銀行擴充 | ✅ Phase 1 完成 | 5 家銀行上線（E.SUN / Cathay / Taishin / Fubon / CTBC），91 張卡 717 筆優惠（387 RECOMMENDABLE） |
-| 資料品質 | 🔄 進行中 | feature extractors 已補強主要卡片；部分聯名卡仍僅 1-2 筆優惠 |
+| 銀行擴充 | ✅ Phase 1 完成 | 5 家銀行上線（E.SUN / Cathay / Taishin / Fubon / CTBC），100 張卡 763 筆優惠（506 RECOMMENDABLE） |
+| 資料品質 | ✅ P0 完成 | general reward expansion 修復、Richart plan-specific 修復、feature extractor expansion 修復；RECOMMENDABLE 從 387→506 |
 | Auth / Rate Limiting | ⏳ 未開始 | Phase 2 商業化時實作 |
 
 ## 已支援銀行
@@ -75,9 +75,15 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 ### cardsense-web（最活躍）
 
-**Latest**: `e3364b7` — Improve cards catalog page: bank colors, highlights, better empty state
+**Latest**: `e42c838` — Add total and recommendable promotion counts to CardItem component
 
 **近期功能迭代**：
+- `e42c838` Add total and recommendable promotion counts to CardItem component
+- `0581117` Show catalog review and general reward hints
+- `b2f01ed` Promote key filters above advanced section, default to free/general
+- `8535265` Reorder form fields and add grouped payment method picker
+- `d9f25aa` Unify condition badge colors across card detail and recommendation pages
+- `8f6ab8c` Improve card detail page: color-coded badges, bank-themed header, fix mobile nav overflow
 - `e3364b7` Improve cards catalog page: bank colors, highlights, better empty state
 - `2cd5ac3` Add WaddleStudio credit to footer
 - `21183d8` Hide generic mobile pay option from payment filters
@@ -111,9 +117,10 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 ### cardsense-api
 
-**Latest**: `494129f` — Fix Supabase prepared statement pooler issue
+**Latest**: `1270f2a` — Add catalog review signals to API responses
 
 **近期功能迭代**：
+- `1270f2a` Add catalog review signals to API responses
 - `494129f` Fix Supabase prepared statement pooler issue
 - `c4c375f` Add Richart benefit level runtime handling
 - `609470a` Add active plan runtime state to recommendation engine
@@ -171,9 +178,14 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 ### cardsense-extractor
 
-**Latest**: `e4bbf7d` — feat: add MILES cashback type and feature extractors for Cathay/Fubon cards
+**Latest**: `3fb8f80` — fix: recategorize HERBALIFE general reward from ONLINE/SUBSCRIPTION to OTHER/GENERAL
 
 **近期功能迭代**：
+- `3fb8f80` fix: recategorize HERBALIFE general reward for expansion
+- `d001ab4` fix: pass Fubon feature extractor promos through general reward expansion
+- `84c4294` fix: keep Richart plan-specific promos RECOMMENDABLE despite registration text
+- `c712e39` fix: promote decomposed general reward clones to RECOMMENDABLE
+- `8d3e590` docs: update skills, case studies, and README for feature extractor pattern
 - `e4bbf7d` feat: add MILES cashback type and feature extractors for Cathay/Fubon cards
 - `5f23202` feat: add Taishin feature extractors for 9 card families
 - `a1f02ca` feat: add flexible CTBC targeted extraction and extract-ctbc skill
@@ -315,33 +327,51 @@ SQLite → Supabase sync 上線，API prod 從 Supabase 讀取。
 
 ### 🔥 當前優先：既有 5 家銀行資料品質提升
 
-**問題現狀**（2026-04-07 更新）：
+**問題現狀**（2026-04-07 部署後）：
 
-- 91 張卡 717 筆優惠，387 RECOMMENDABLE（較 2026-04-06 審計大幅改善）
-- Feature extractors 已為 Cathay（蝦皮/長榮/亞萬/雙幣）、Fubon（鑽保/富利生活/Open Possible）、Taishin（9 個卡族）補上基本回饋
-- E.SUN 覆蓋率從 14→45 張卡，RECOMMENDABLE 從 85→271
-- 仍有部分聯名卡（如台茂、Angel、台北市政府認同卡等）僅有 CATALOG_ONLY 優惠
-- `MILES` 回饋類型已新增，API 端需對應支援
+- 100 張卡 763 筆優惠：506 RECOMMENDABLE / 148 CATALOG_ONLY / 109 FUTURE_SCOPE
+- 82 張卡有 RECOMMENDABLE 優惠
+- 16 張卡完全沒有 RECOMMENDABLE 優惠（純 CATALOG_ONLY）
+- `MILES` 回饋類型已新增於 extractor 端，API 端 RewardCalculator 需對應支援
+- 3 張 Fubon 卡（INSURANCE、INFINITE、DIGITALLIFE）在最新 extraction 中消失，疑似銀行網頁變動
 
 **目標**：讓每張 RECOMMENDABLE 卡在其適用的消費情境中都能公平入榜比較。
 
-#### P0：泛用回饋卡補全
+#### P0：泛用回饋卡補全 — ✅ 完成
 
-許多卡片有全通路基本回饋（如 0.5-2.5% 現金回饋），目前只有一筆 `OTHER+GENERAL`。這些卡在任何消費情境查詢時都應入榜與指定通路優惠競爭。
+**已完成**：
+- ✅ General reward promotion expansion 跨 5 家 extractor 實作（`d6920fa`）
+- ✅ Feature extractors 為主要卡族補上基本回饋（Cathay/Fubon/Taishin/ESUN）
+- ✅ E.SUN 覆蓋率大幅提升（14→45 張卡，RECOMMENDABLE 85→271 筆）
+- ✅ DecisionEngine 已支援泛用回饋與指定通路優惠一起排名
+- ✅ Decomposed general reward clones 提升為 RECOMMENDABLE（`c712e39`）— 修復 POYA +7、ANGEL/TAIMALL/TAIPEICITY/GLOBALMALL 等聯名卡
+- ✅ Richart plan-specific promos 不因登錄文字降級（`84c4294`）— RICHART +4
+- ✅ Fubon feature extractor 通過 general reward expansion（`d001ab4`）— INSURANCE +6
+- ✅ HERBALIFE 分類修正 ONLINE/SUBSCRIPTION → OTHER/GENERAL（`3fb8f80`）— HERBALIFE +6
+- ✅ 低覆蓋卡審查完成：26 張中可修的已修，其餘為 niche 聯名卡（航空/旅遊/車廠/飯店），1-2 筆 RECOMMENDABLE 已合理
 
-- 確認泛用回饋的適用類別範圍（全類別 or 排除特定類別）
-- 確保 DecisionEngine 在比較時，泛用回饋能與指定通路優惠一起排名
-- 審查 `ESUN_EASY_CARD`（0.2% 點數）、`CTBC_B_CASHBACK_SIGNATURE`（2.5%）、`ESUN_DOCTOR_CARD`（0.6%）等代表案例
+**剩餘項目（移至後續待辦）**：
+- `MILES` 類型 API 端 RewardCalculator 支援
+- 3 張消失的 Fubon 卡需 targeted re-extraction
 
-#### P1：CATALOG_ONLY 降級審查
+#### P1：CATALOG_ONLY 降級審查 — 🟡 約 50% 完成
 
-目前 51 張卡 159 筆優惠被標為 CATALOG_ONLY。部分降級原因是資料不足而非真正不可推薦。
+**已完成**：
+- ✅ API 端新增 catalog review signals 欄位（`1270f2a`）
+- ✅ 前端顯示 catalog review hints + 優惠筆數（`0581117`、`e42c838`）
+- ✅ 卡片目錄預設篩選 FREE + GENERAL（`b2f01ed`）
+- ✅ P0 修復連帶效果：CATALOG_ONLY 從 195→148（-47），4 張純 CATALOG_ONLY 卡升級為有 RECOMMENDABLE
 
-- 逐銀行審查 CATALOG_ONLY 優惠，判斷哪些可提升為 RECOMMENDABLE
-- 重點審查 Richart（7 筆中 5 筆 CATALOG_ONLY）、Fubon、CTBC 聯名卡
-- 對於確實需要登錄或 plan 切換的優惠，維持 CATALOG_ONLY 但補充說明
+**待完成（核心審查）**：
+- 148 筆 CATALOG_ONLY 逐銀行審查
+- 16 張純 CATALOG_ONLY 卡重點審查：
+  - CATHAY: FORMOSA
+  - CTBC: B_IR、C_CAL、C_CHT、C_HANSHIN、C_SHOWTIME、C_TSDREAMMALL、C_UNIOPEN、C_UPE、C_XUEXUE
+  - ESUN: ICASH_CARD、LUNA_PLAZA、NICE_CARD
+  - TAISHIN: DUAL_CURRENCY、ROSE、SUN
+- 確實需要登錄/plan 切換的優惠維持 CATALOG_ONLY 但補充說明
 
-#### P2：聯名卡通用優惠補全
+#### P2：聯名卡通用優惠補全 — ⏳ 未開始
 
 聯名卡除了專屬通路優惠，通常也享有該銀行的通用活動。目前 extractor 只抓了專屬頁面。
 
@@ -349,16 +379,35 @@ SQLite → Supabase sync 上線，API prod 從 Supabase 讀取。
 - 判斷是否需要為聯名卡補入通用優惠 row
 - 評估 extractor 是否需要新增「bank-wide promotion」擷取能力
 
-#### P3：前端體驗配合
+#### P3：前端體驗配合 — 🟡 約 80% 完成
 
-- 優惠少的卡片在目錄頁降低顯示優先度或加標註
-- 推薦結果中標示「此卡僅有通用回饋」
-- 卡片詳情頁顯示「此卡目前僅擷取到 N 筆優惠」提示
+**已完成**：
+- ✅ 卡片目錄顯示 total / recommendable 優惠筆數（`e42c838`）
+- ✅ Catalog review + general reward hints 提示（`0581117`）
+- ✅ 關鍵篩選器提升至進階區塊上方、預設 free/general（`b2f01ed`）
+- ✅ 表單欄位重排 + grouped payment method picker（`8535265`）
+- ✅ Condition badge 跨頁面統一色系（`d9f25aa`）
+- ✅ 卡片詳情頁銀行主題色 header + color-coded badges（`8f6ab8c`）
+
+**待完成**：
+- 推薦結果中標示「此卡僅有通用回饋」（需 P0 泛用回饋標記完成後配合）
+- 卡片詳情頁「此卡目前僅擷取到 N 筆優惠」細化提示
+
+### ➡️ 建議接續項目
+
+依優先順序：
+
+1. **執行 P1 核心審查**：逐銀行走過 148 筆 CATALOG_ONLY，判斷可提升的優惠（使用 `cardsense-bank-promo-review` skill）
+2. **Fubon targeted re-extraction**：補回 INSURANCE/INFINITE/DIGITALLIFE 3 張消失的卡
+3. **P2 聯名卡通用優惠**：評估 bank-wide promotion 擷取方案
+4. **MILES API 支援**：RewardCalculator 新增哩程回饋計算
 
 ### 後續待辦
 
 | 項目 | 說明 | 前置條件 |
 |------|------|----------|
+| Fubon targeted re-extraction | 補回 INSURANCE/INFINITE/DIGITALLIFE | — |
+| `MILES` API 支援 | RewardCalculator 新增哩程回饋計算 | — |
 | `stackability` 顯式欄位 | 拆出 SQLite 欄位，取代 `raw_payload_json` 還原 | — |
 | `POINTS` 折現規則 | 銀行別點數折現率（目前各銀行點數價值不同） | — |
 | 商業化 | API Key + Rate Limiting、聯盟行銷、Stripe Billing | 資料品質達標 |
