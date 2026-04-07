@@ -49,7 +49,7 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 | 模組 | 狀態 | 說明 |
 |------|------|------|
-| cardsense-contracts | ✅ 完成 | Promotion / Recommendation / Stackability schema 穩定，含 subcategory 欄位 |
+| cardsense-contracts | ✅ 完成 | Promotion / Recommendation / Stackability schema 穩定，含 subcategory 欄位、merchant registry（83 筆） |
 | cardsense-extractor | ✅ 核心完成 | E.SUN + Cathay + TAISHIN + FUBON + CTBC real extractor、subcategory inference、JSONL + SQLite 匯入、refresh_and_deploy |
 | cardsense-api | ✅ 核心完成 + 已部署 | 情境推薦、疊加優惠計算、break-even、subcategory 場景過濾、scope/eligibilityType/通路 condition 匹配；指定 subcategory 時會一起比較 matching scene + GENERAL；Render 上線 |
 | cardsense-web | ✅ MVP 完成 + 已部署 | 推薦表單 + 卡片目錄 + SubcategoryGrid 場景選擇 + `/calc` 社群入口頁 + merchantName 輸入/提示 + 深色模式 + RWD + fintech UI |
@@ -75,9 +75,11 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 ### cardsense-web（最活躍）
 
-**Latest**: `e42c838` — Add total and recommendable promotion counts to CardItem component
+**Latest**: `649758c` — refactor: migrate condition types to VENUE/PAYMENT, split VENUE subcategory
 
 **近期功能迭代**：
+- `649758c` refactor: migrate condition types to VENUE/PAYMENT, split VENUE subcategory, add purple badge for payment conditions
+- `664441d` feat: add 中友百貨 and 大江購物中心 to merchant picker
 - `e42c838` Add total and recommendable promotion counts to CardItem component
 - `0581117` Show catalog review and general reward hints
 - `b2f01ed` Promote key filters above advanced section, default to free/general
@@ -117,9 +119,10 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 ### cardsense-api
 
-**Latest**: `1270f2a` — Add catalog review signals to API responses
+**Latest**: `9afb134` — refactor: migrate condition types to VENUE/PAYMENT
 
 **近期功能迭代**：
+- `9afb134` refactor: migrate condition types to VENUE/PAYMENT in DecisionEngine and CatalogService
 - `1270f2a` Add catalog review signals to API responses
 - `494129f` Fix Supabase prepared statement pooler issue
 - `c4c375f` Add Richart benefit level runtime handling
@@ -148,15 +151,18 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 | `PROFESSION_SPECIFIC` | 職業限定卡（醫師卡、會計師卡等），僅目錄展示 |
 | `BUSINESS` | 商務/公司卡，僅目錄展示 |
 
-**平台/通路 Condition 匹配**：
+**Condition 匹配**：
 | Condition Type | 用途 | 範例 |
 |---|---|---|
-| `ECOMMERCE_PLATFORM` | 電商平台限定 | MOMO, SHOPEE, PCHOME |
-| `RETAIL_CHAIN` | 實體通路限定 | COSTCO, PXMART, CARREFOUR |
-| `PAYMENT_PLATFORM` | 支付平台限定 | LINE_PAY, JKOPAY, TAIWAN_PAY |
-| `MERCHANT` | 商家名稱限定 | CHATGPT, CLAUDE, UBER_EATS, CHINA_AIRLINES |
+| `VENUE` | 消費場所限定（電商、實體通路、商家） | MOMO, SHOPEE, PXMART, CHUNGYO, CHATGPT |
+| `PAYMENT` | 支付工具限定 | LINE_PAY, APPLE_PAY, JKOPAY |
 | `DAY_OF_MONTH` | 每月指定日 | 13（每月13號卡友日） |
 | `DAY_OF_WEEK` | 每週指定日 / 週末 | WED, FRI_SAT, WEEKEND |
+| `LOCATION_ONLY` | 地區限定 | 海外消費 |
+| `REGISTRATION_REQUIRED` | 需登錄 | — |
+| `TEXT` | 文字描述條件 | 自由文字 |
+
+> 舊 condition type（`ECOMMERCE_PLATFORM`、`RETAIL_CHAIN`、`MERCHANT`、`PAYMENT_PLATFORM`）已於 2026-04-07 統一遷移為 `VENUE`/`PAYMENT`。
 
 **推薦排序（確定性五層 tiebreaker）**：
 1. effective return 降序
@@ -180,9 +186,12 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 ### cardsense-extractor
 
-**Latest**: `ca7b38c` — docs: add cobranded retailer and date conditions implementation plan
+**Latest**: `7c83bab` — test: update condition type assertions to VENUE/PAYMENT
 
 **近期功能迭代**：
+- `7c83bab` test: update condition type assertions to VENUE/PAYMENT
+- `652159d` refactor: migrate condition types to VENUE/PAYMENT in all bank extractors
+- `6083df4` refactor: migrate condition types to VENUE/PAYMENT in promotion_rules
 - `ca7b38c` docs: add cobranded retailer and date conditions implementation plan
 - `dd91685` fix: use post-expansion cobranded condition inference for E.SUN
 - `0a3b588` feat: wire cobranded retailer and date conditions into all extractors
@@ -246,13 +255,13 @@ sql/
 
 ### cardsense-contracts
 
-**Latest**: `a976614` — docs: add canonical subcategory taxonomy
+**Latest**: `d316d2e` — feat: add merchant registry, split VENUE subcategory into SINGING + LIVE_EVENT
 
 **Schema 結構**：
 ```
 promotion/     → promotion-normalized.schema.json + valid/invalid 範例
 recommendation/ → request + response JSON schema 與範例
-taxonomy/      → category / channel / frequency taxonomy
+taxonomy/      → category / channel / frequency / merchant-registry taxonomy
 ```
 
 **Stackability Metadata**：描述優惠間的可疊加關係
@@ -285,7 +294,7 @@ taxonomy/      → category / channel / frequency taxonomy
 
 ---
 
-## 已知限制（截至 2026-04-07）
+## 已知限制（截至 2026-04-08）
 
 **API**：
 - SQLite repo 從 `raw_payload_json` 還原 `stackability` metadata，尚未拆成顯式欄位
@@ -295,7 +304,7 @@ taxonomy/      → category / channel / frequency taxonomy
 
 **Extractor**：
 - `DAY_OF_MONTH` / `DAY_OF_WEEK` condition 目前僅標記，API 端尚未依日期過濾推薦結果
-- `COBRANDED_RETAILER_SIGNALS` 目前僅覆蓋中友百貨 / 大江，其他聯名卡通路待擴充
+- `COBRANDED_RETAILER_SIGNALS` 目前僅覆蓋中友百貨 / 大江，其他聯名卡通路可透過 merchant-registry.json 擴充
 - 銀行頁面結構可能改版，heuristic 需持續調整
 - 部分活動屬於身份型、首刷型或分期型，只適合歸類為 `CATALOG_ONLY` 或 `FUTURE_SCOPE`
 - Real extractor 依賴外部網站可用性
@@ -423,8 +432,7 @@ SQLite → Supabase sync 上線，API prod 從 Supabase 讀取。
 
 依優先順序：
 
-1. **Merchant Registry（contracts）**：統一 merchant/retailer 參考資料至 contracts repo JSON，extractor + frontend 引用，取代三處 hardcode（含 Unicard 百大通路）
-2. **執行 P1 核心審查**：逐銀行走過 148 筆 CATALOG_ONLY，判斷可提升的優惠（使用 `cardsense-bank-promo-review` skill）
+1. **執行 P1 核心審查**：逐銀行走過 148 筆 CATALOG_ONLY，判斷可提升的優惠（使用 `cardsense-bank-promo-review` skill）
 3. **Fubon targeted re-extraction**：補回 INSURANCE/INFINITE/DIGITALLIFE 3 張消失的卡
 4. **P2 聯名卡通用優惠**：評估 bank-wide promotion 擷取方案
 5. **MILES API 支援**：RewardCalculator 新增哩程回饋計算
@@ -437,7 +445,7 @@ SQLite → Supabase sync 上線，API prod 從 Supabase 讀取。
 | `MILES` API 支援 | RewardCalculator 新增哩程回饋計算 | — |
 | 日期 condition API 過濾 | DecisionEngine 支援 DAY_OF_MONTH / DAY_OF_WEEK 過濾 | P0.5 ✅ |
 | 擴充 COBRANDED_RETAILER_SIGNALS | 寶雅、燦坤、新光三越等聯名卡通路 | P0.5 ✅ |
-| Merchant Registry（contracts） | 統一 merchant/retailer 參考資料至 contracts repo JSON，取代三處 hardcode | P0.5 ✅ |
+| Merchant Registry（contracts） | ✅ 已完成 — 83 筆 merchant，VENUE/PAYMENT condition type 遷移完成 | P0.5 ✅ |
 | `stackability` 顯式欄位 | 拆出 SQLite 欄位，取代 `raw_payload_enums` 還原 | — |
 | `POINTS` 折現規則 | 銀行別點數折現率（目前各銀行點數價值不同） | — |
 | 商業化 | API Key + Rate Limiting、聯盟行銷、Stripe Billing | 資料品質達標 |
@@ -519,7 +527,7 @@ npm run dev                                       # http://localhost:5173
 - [CardSense Spec](./specs/spec-cardSense.md) — 完整專案規格說明書
 - [API Implementation Checklist](https://github.com/WaddleStudio/cardsense-api/blob/master/IMPLEMENTATION_CHECKLIST.md) — API 待辦與遷移時機
 
-*Last updated: 2026-04-07*
+*Last updated: 2026-04-08*
 
 ## 備註
 
