@@ -360,11 +360,13 @@ SQLite → Supabase sync 上線，API prod 從 Supabase 讀取。
 
 ### 🔥 當前優先：既有 5 家銀行資料品質提升
 
-**問題現狀**（2026-04-08 更新）：
+**問題現狀**（2026-04-08 重新擷取後）：
 
-- 100 張卡 763 筆優惠（Supabase），local SQLite 451 筆（部分銀行）
-- P1 審查後：25 筆升級 RECOMMENDABLE（local），分類器修正待重新擷取可再升級 ~42 筆
-- 純 CATALOG_ONLY 卡中 TAISHIN_RICHART、ESUN_ICASH 等已升級
+- 100 張卡 813 筆優惠：**628 RECOMMENDABLE** / 73 CATALOG_ONLY / 112 FUTURE_SCOPE
+- 對比 4/7：RECOMMENDABLE 506→628（+122），CATALOG_ONLY 148→73（-75）
+- Unicard 百大 17→57 筆（3 plans × 19 clusters），全部 RECOMMENDABLE
+- CATHAY_WORLD 專屬優惠 56 筆升級 RECOMMENDABLE（原 44 筆全為 CATALOG_ONLY）
+- 18 張卡仍無 RECOMMENDABLE（多為聯名小卡：學學、南紡、秀泰等）
 - `MILES` 回饋類型已新增於 extractor 端，API 端 RewardCalculator 需對應支援
 - 3 張 Fubon 卡（INSURANCE、INFINITE、DIGITALLIFE）在最新 extraction 中消失，疑似銀行網頁變動
 
@@ -420,10 +422,14 @@ SQLite → Supabase sync 上線，API prod 從 Supabase 讀取。
   - 31 筆正確維持 CATALOG_ONLY（停車、券類、抽獎、首綁等）
   - 15 筆需重新擷取（profession cards overseas 等含 body-only trigger）
 
-**待完成**：
-- 重新擷取 CATHAY 以修正 42 筆世界卡場景優惠的分類 + scope（需分類器修正生效）
-- Supabase sync（local SQLite 已更新 25 筆）
-- ESUN_UNICARD 百大需 plan_id 對應才能升級
+- ✅ 重新擷取 CATHAY + ESUN（2026-04-08）：分類器修正 + Unicard 百大展開生效
+- ✅ Supabase sync 完成：813 筆（628 RECOMMENDABLE）已上線
+- ✅ ESUN_UNICARD 百大展開為 3 plan-specific promos（`61fd2bd`）
+
+**剩餘 73 筆 CATALOG_ONLY 分佈**：
+- CTBC 19（多為聯名卡通路優惠）、ESUN 18（券類/停車/首綁等）、TAISHIN 16（停車方案等）
+- CATHAY 12（含 Formosa 加油站等）、FUBON 8（券類/分期等）
+- 多數為正確分類，無需進一步升級
 
 #### P2：聯名卡通用優惠補全 — ⏳ 未開始
 
@@ -451,8 +457,7 @@ SQLite → Supabase sync 上線，API prod 從 Supabase 讀取。
 
 依優先順序：
 
-1. **重新擷取 + Supabase sync**：用修正後分類器重新擷取 CATHAY/ESUN，sync 升級結果到 Supabase
-2. **Fubon targeted re-extraction**：補回 INSURANCE/INFINITE/DIGITALLIFE 3 張消失的卡
+1. **Fubon targeted re-extraction**：補回 INSURANCE/INFINITE/DIGITALLIFE 3 張消失的卡
 4. **P2 聯名卡通用優惠**：評估 bank-wide promotion 擷取方案
 5. **MILES API 支援**：RewardCalculator 新增哩程回饋計算
 
