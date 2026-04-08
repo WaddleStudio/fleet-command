@@ -49,13 +49,13 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 | 模組 | 狀態 | 說明 |
 |------|------|------|
-| cardsense-contracts | ✅ 完成 | Promotion / Recommendation / Stackability schema 穩定，含 subcategory 欄位、merchant registry（170+ 筆，含 14 家飯店品牌），前端透過 Vite alias 動態引用 taxonomy JSON |
-| cardsense-extractor | ✅ 核心完成 | E.SUN + Cathay + TAISHIN + FUBON + CTBC real extractor、subcategory inference、JSONL + SQLite 匯入、refresh_and_deploy |
-| cardsense-api | ✅ 核心完成 + 已部署 | 情境推薦、疊加優惠計算、break-even、subcategory 場景過濾、scope/eligibilityType/通路 condition 匹配；指定 subcategory 時會一起比較 matching scene + GENERAL；Render 上線 |
+| cardsense-contracts | ✅ 完成 | Promotion / Recommendation / Stackability schema 穩定，9 大消費類別（新增 TRAVEL 旅遊）、merchant registry（190+ 筆，含 35+ 飯店/餐廳品牌）、subcategory→category 自動重映射、taxonomy 整合完成，前端透過 Vite alias 動態引用 taxonomy JSON |
+| cardsense-extractor | ✅ 核心完成 | E.SUN + Cathay + TAISHIN + FUBON + CTBC real extractor、subcategory inference、subcategory→category remap、JSONL + SQLite 匯入、refresh_and_deploy |
+| cardsense-api | ✅ 核心完成 + 已部署 | 情境推薦、疊加優惠計算、break-even、subcategory 場景過濾、scope/eligibilityType/通路 condition 匹配；VENUE 跨類別匹配（hotel brand 同時命中 DINING + TRAVEL）；Render 上線 |
 | cardsense-web | ✅ MVP 完成 + 已部署 | 推薦表單 + 卡片目錄 + SubcategoryGrid 場景選擇 + `/calc` 社群入口頁 + merchantName 輸入/提示 + 深色模式 + RWD + fintech UI |
 | 資料庫遷移 | ✅ 完成 | SQLite → Supabase sync 已上線；API prod 從 Supabase 讀取 |
-| 銀行擴充 | ✅ Phase 1 完成 | 5 家銀行上線（E.SUN / Cathay / Taishin / Fubon / CTBC），100 張卡 763 筆優惠（506 RECOMMENDABLE） |
-| 資料品質 | ✅ P0 完成 | general reward expansion 修復、Richart plan-specific 修復、feature extractor expansion 修復；RECOMMENDABLE 從 387→506；聯名卡通路 + 日期 condition 推斷已上線 |
+| 銀行擴充 | ✅ Phase 1 完成 | 5 家銀行上線（E.SUN / Cathay / Taishin / Fubon / CTBC），801 筆優惠 |
+| 資料品質 | ✅ P1 完成 | general reward expansion、分類器精確化、Unicard 百大展開、飯店 VENUE 標注、TRAVEL 類別新增、跨類別 VENUE 匹配；9 大消費類別穩定 |
 | Auth / Rate Limiting | ⏳ 未開始 | Phase 2 商業化時實作 |
 
 ## 已支援銀行
@@ -75,9 +75,10 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 ### cardsense-web（最活躍）
 
-**Latest**: `7fb92ca` — dynamic taxonomy from contracts
+**Latest**: `b71467a` — add TRAVEL category, remove frontend category overrides
 
 **近期功能迭代**：
+- `b71467a` feat: add TRAVEL category, remove frontend category overrides — 9 大類別
 - `7fb92ca` chore: trigger redeploy for updated hotel merchants in contracts
 - `6c7e271` fix: remove auto-generated category-level merchant fallbacks
 - `4380b05` fix: clone contracts in Vercel build, fix JSON type casts
@@ -127,9 +128,11 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 ### cardsense-api
 
-**Latest**: `9afb134` — refactor: migrate condition types to VENUE/PAYMENT
+**Latest**: `ccbbd7b` — update DB with TRAVEL category and taxonomy consolidation
 
 **近期功能迭代**：
+- `ccbbd7b` chore: update DB with TRAVEL category and taxonomy consolidation
+- `48bbe1a` feat: bypass category filter when merchant matches VENUE condition — 跨類別 VENUE 匹配
 - `9afb134` refactor: migrate condition types to VENUE/PAYMENT in DecisionEngine and CatalogService
 - `1270f2a` Add catalog review signals to API responses
 - `494129f` Fix Supabase prepared statement pooler issue
@@ -194,9 +197,12 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 ### cardsense-extractor
 
-**Latest**: `7c83bab` — test: update condition type assertions to VENUE/PAYMENT
+**Latest**: `672de27` — fix: add AIRLINE to subcategory→category remap (TRANSPORT)
 
 **近期功能迭代**：
+- `672de27` fix: add AIRLINE to subcategory→category remap (TRANSPORT)
+- `e9a2066` feat: subcategory→category remap for TRAVEL/TRANSPORT/SHOPPING
+- `241122a` feat: add 12 standalone venue signals for COBRANDED_RETAILER_SIGNALS
 - `7c83bab` test: update condition type assertions to VENUE/PAYMENT
 - `652159d` refactor: migrate condition types to VENUE/PAYMENT in all bank extractors
 - `6083df4` refactor: migrate condition types to VENUE/PAYMENT in promotion_rules
@@ -263,9 +269,11 @@ sql/
 
 ### cardsense-contracts
 
-**Latest**: `c90faab` — feat: add 14 hotel brands to HOTEL subcategory
+**Latest**: `8c17abd` — refactor: add TRAVEL category, consolidate taxonomy
 
 **近期功能迭代**：
+- `8c17abd` refactor: add TRAVEL category, consolidate taxonomy
+- `ff9b9cf` feat: add 11 standalone hotel/restaurant venues to merchant registry
 - `c90faab` feat: add 14 hotel brands to HOTEL subcategory (萬豪/希爾頓/IHG/香格里拉/凱悅/喜來登/晶華/老爺/寒舍/凱撒/國賓/福華/雲品/涵碧樓)
 - `228f4f6` feat: expand merchant registry with 60 new entries across all subcategories
 - `bb8745e` feat: add 台灣 Pay to payment registry
@@ -319,7 +327,7 @@ taxonomy/      → category / channel / frequency / subcategory / merchant-regis
 
 **Extractor**：
 - `DAY_OF_MONTH` / `DAY_OF_WEEK` condition 目前僅標記，API 端尚未依日期過濾推薦結果
-- `COBRANDED_RETAILER_SIGNALS` 目前僅覆蓋中友百貨 / 大江，其他聯名卡通路可透過 merchant-registry.json 擴充
+- `COBRANDED_RETAILER_SIGNALS` 已擴充至 26+ 獨立場所（含 14 飯店集團 + 12 獨立飯店/餐廳），可持續擴充寶雅、燦坤等聯名卡通路
 - 銀行頁面結構可能改版，heuristic 需持續調整
 - 部分活動屬於身份型、首刷型或分期型，只適合歸類為 `CATALOG_ONLY` 或 `FUTURE_SCOPE`
 - Real extractor 依賴外部網站可用性
@@ -406,6 +414,25 @@ SQLite → Supabase sync 上線，API prod 從 Supabase 讀取。
 - `COBRANDED_RETAILER_SIGNALS` 可輕鬆擴充（寶雅、燦坤等）
 - E.SUN 因 card name 與 promotion title 分離，需 post-expansion pass；其他 extractor 用 inline pipeline
 
+#### P0.6：Subcategory→Category 自動重映射 — ✅ 完成
+
+**問題**：HOTEL / TRAVEL_PLATFORM / TRAVEL_AGENCY 等 subcategory 在舊分類下歸屬 OVERSEAS 或 OTHER；GAS_STATION / EV_CHARGING / PARKING 歸屬 OTHER；HOME_LIVING 歸屬 OTHER。新增 TRAVEL category 後需自動重映射。
+
+**已完成**：
+- ✅ `_SUBCATEGORY_CATEGORY_REMAP` 字典在 `normalize.py` 與 `db_store.py` 實作（`e9a2066`）
+- ✅ HOTEL / TRAVEL_PLATFORM / TRAVEL_AGENCY → TRAVEL
+- ✅ EV_CHARGING / PARKING / GAS_STATION / AIRLINE → TRANSPORT
+- ✅ HOME_LIVING → SHOPPING
+- ✅ AIRLINE 補入 remap（`672de27`）— 修正 AIRLINE subcategory 未歸入 TRANSPORT 的問題
+- ✅ `COBRANDED_RETAILER_SIGNALS` 擴充 12 個獨立飯店/餐廳場所（`241122a`）
+- ✅ contracts `subcategory-taxonomy.json` 同步更新 subcategory → category 歸屬（`8c17abd`）
+- ✅ merchant registry 新增 11 個獨立飯店/餐廳 venue（`ff9b9cf`）
+
+**設計決策**：
+- 重映射在 normalize pipeline 最後階段執行，確保 subcategory 推斷完成後才改寫 category
+- `db_store.py` 同步維護相同 remap 字典，確保 import 路徑一致
+- contracts `subcategory-taxonomy.json` 以 subcategory 為 key、category 為 value 的結構支援跨 repo 驗證
+
 #### P1：CATALOG_ONLY 降級審查 — 🟢 核心審查完成
 
 **已完成**：
@@ -468,8 +495,9 @@ SQLite → Supabase sync 上線，API prod 從 Supabase 讀取。
 | Fubon targeted re-extraction | 補回 INSURANCE/INFINITE/DIGITALLIFE | — |
 | `MILES` API 支援 | RewardCalculator 新增哩程回饋計算 | — |
 | 日期 condition API 過濾 | DecisionEngine 支援 DAY_OF_MONTH / DAY_OF_WEEK 過濾 | P0.5 ✅ |
-| 擴充 COBRANDED_RETAILER_SIGNALS | 寶雅、燦坤、新光三越等聯名卡通路 | P0.5 ✅ |
-| Merchant Registry（contracts） | ✅ 已完成 — 170+ 筆 merchant（含 14 飯店品牌），前端動態引用，VENUE/PAYMENT condition type 遷移完成 | P0.5 ✅ |
+| 擴充 COBRANDED_RETAILER_SIGNALS | 🟢 飯店/餐廳已擴充至 26+ 場所；寶雅、燦坤、新光三越等聯名通路尚未加入 | P0.5 ✅ |
+| Merchant Registry（contracts） | ✅ 已完成 — 157 筆 merchant + 26+ COBRANDED 場所（含 35+ 飯店/餐廳品牌），前端動態引用，VENUE/PAYMENT 遷移 + TRAVEL category + taxonomy 整合完成 | P0.5 ✅ |
+| Subcategory→Category Remap | ✅ 已完成 — HOTEL/TRAVEL_PLATFORM/TRAVEL_AGENCY→TRAVEL、GAS_STATION/EV_CHARGING/PARKING/AIRLINE→TRANSPORT、HOME_LIVING→SHOPPING | P0.6 ✅ |
 | `stackability` 顯式欄位 | 拆出 SQLite 欄位，取代 `raw_payload_enums` 還原 | — |
 | `POINTS` 折現規則 | 銀行別點數折現率（目前各銀行點數價值不同） | — |
 | 商業化 | API Key + Rate Limiting、聯盟行銷、Stripe Billing | 資料品質達標 |
@@ -551,7 +579,7 @@ npm run dev                                       # http://localhost:5173
 - [CardSense Spec](./specs/spec-cardSense.md) — 完整專案規格說明書
 - [API Implementation Checklist](https://github.com/WaddleStudio/cardsense-api/blob/master/IMPLEMENTATION_CHECKLIST.md) — API 待辦與遷移時機
 
-*Last updated: 2026-04-08*
+*Last updated: 2026-04-08（P0.6 subcategory→category remap 完成）*
 
 ## 備註
 
