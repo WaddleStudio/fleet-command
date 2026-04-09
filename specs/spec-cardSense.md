@@ -155,7 +155,7 @@ GitHub Organization
 ### 3.1.1 Frontend Delivery Surface
 
 - `cardsense-web` 作為獨立前端 repo，承接 `/`、`/cards`、`/calc` 三個主要路由。
-- `/calc` 明確不新增 API endpoint、不新增資料庫表，僅重用既有 `GET /v1/cards` 與 `POST /v1/recommendations/card`。
+- `/calc` 明確不新增 API endpoint、不新增資料庫表，僅重用既有 `GET /v1/cards` 與 `POST /v1/recommendations/card`；推薦頁匯率牌告板則留在 `RecommendationForm` drawer。
 - `/calc` 的年度損失、分享圖片、CTA 導流與追蹤埋點皆屬前端責任，不改動 contracts 或 extractor 邊界。
 
 ### 3.2 資料流

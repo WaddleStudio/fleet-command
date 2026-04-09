@@ -56,8 +56,8 @@
 
 RecommendationForm 先以 trigger button 開啟右側 drawer，讓使用者在推薦頁直接調整匯率估值，不必先進 `/calc`。
 
-- `POINTS` / `MILES` 已以 section 分組，保留 `_DEFAULT` 與銀行 / 計畫別 row
-- row 內仍沿用 `unit`、`note`、`exchangeRateSource`、`customExchangeRates`
+- `POINTS` / `MILES` 已以 section 分組，保留 `_DEFAULT` 與銀行 / 計畫別 row；板面只呈現 `unit` 與 `note`。
+- board row 只顯示 `unit` 與 `note`；自訂匯率由 recommendation flow 的 request/state 驅動。
 - `/calc` 的整合與分享圖聯動保留到下一階段
 - 更細的 program-level explainability 仍是後續項目
 
