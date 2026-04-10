@@ -499,19 +499,19 @@ SQLite → Supabase sync 上線，API prod 從 Supabase 讀取。
 
 目前產品重心已從「全站卡片推薦」逐步轉向「高價值情境入口 + 個人化工具 + B2B 能力」。以下是接續項目的優先順序：
 
-1. **`MILES` API 支援與高階點數估值**：基礎能力已落地，下一步是把銀行別點數 / 航空計畫估值做得更細，主攻高階旅遊算卡情境。
-2. **即時匯率引擎 (Exchange Rate Engine)**：核心能力已上線（`/v1/exchange-rates`、`customExchangeRates`、`rewardDetail`、前端覆寫面板），推薦頁現在已改為 trigger button + right-side drawer 的 dense 匯率牌告板；`/calc` 仍待接入。
-3. **Feedback Widget (Discord / Notion downstream)**：這是收集產品意見的輕量入口，未來可改接 Discord webhook / Notion Database。
-4. **我的卡包 (My Wallet Mode)**：前端支援勾選持有卡片，DecisionEngine 優先從持卡庫推薦，並量化計算辦新卡的「利差」。
+1. **高階點數 / 哩程估值深化 (`MILES` / `POINTS`)**：`MILES` API、基礎估值與 `rewardDetail` 已落地；下一步聚焦更細的銀行別點數 / 航空計畫估值與 explainability，主攻高階旅遊算卡情境。
+2. **即時匯率引擎 (Exchange Rate Engine)**：核心能力已上線（`/v1/exchange-rates`、`customExchangeRates`、`rewardDetail`、前端覆寫面板），推薦頁目前已改為 trigger button + right-side drawer 的 dense 匯率牌告板；下一步聚焦 `/calc` 接入與分享圖整合。
+3. **Feedback Widget (Discord / Notion downstream)**：原生前端回報表單已可用，後續再串接 Discord webhook / Notion Database，形成完整資料修正迴圈。
+4. **我的卡包 (My Wallet Mode)**：前端已具備持卡勾選與結果過濾基礎，DecisionEngine 也可優先從持卡庫推薦；下一步是補齊長期保存、利差估算與回訪工作流。
 5. **`/calc` 社群工具生成極致化**：完善 Canvas 分享圖，針對保費、日韓高消等極端情境做深，成為論壇算卡首選截圖來源。
 6. **Checkout Widget (B2B2C API)**（長期潛力）：未來可能成為 CardSense 直接嵌入外部網站的銷售工具。
 ### 後續待辦狀態調整
 
 | 項目 | 狀態/優先級 | 說明 |
 |------|-------------|------|
-| **`MILES` / `POINTS` 深度計算** | 🔥 P0 (基礎完成，持續細化) | API / contracts / web 已打通，推薦頁已落地 drawer 版匯率牌告板；下一步補更細的銀行別 / 航空計畫估值 |
-| **即時匯率引擎 (Exchange Rate)** | 🔥 P0 (基礎完成) | `/v1/exchange-rates`、`customExchangeRates`、`rewardDetail`、推薦頁 drawer/board 已上線；`/calc` 尚未接入 |
-| **我的卡包 (My Wallet)** | 🔥 P0 (即將開始) | 將平台從「全網比價」轉向「個人持卡最佳化與利差估算」 |
+| **高階點數 / 哩程估值深化 (`MILES` / `POINTS`)** | 🔥 P0 (基礎完成，持續細化) | API / contracts / web 已打通，推薦頁已落地 drawer 版匯率牌告板；下一步補更細的銀行別 / 航空計畫估值與 explainability |
+| **即時匯率引擎 (Exchange Rate)** | 🔥 P0 (基礎完成) | `/v1/exchange-rates`、`customExchangeRates`、`rewardDetail`、推薦頁 drawer/board 已上線；下一步升級為 `/calc` 風格匯率牌告板 |
+| **我的卡包 (My Wallet)** | 🔥 P0 (已啟動，待深化) | 前端持卡勾選與持卡優先推薦已到位，下一步補齊保存偏好、利差估算與回訪體驗 |
 | **Feedback Widget** | 🟡 P1 (原生版可用，待串接) | 站內回饋表單已可用，後續串接 Notion / Discord downstream |
 | 日期 condition API 過濾 | 🟡 P1 | DecisionEngine 支援 DAY_OF_MONTH / DAY_OF_WEEK 過濾 |
 | `stackability` 顯式欄位 | 🟢 P2 | 拆出 SQLite 欄位，取代 `raw_payload_enums` 還原 |
@@ -596,7 +596,7 @@ npm run dev                                       # http://localhost:5173
 - [CardSense Spec](./specs/spec-cardSense.md) — 完整專案規格說明書
 - [API Implementation Checklist](https://github.com/WaddleStudio/cardsense-api/blob/master/IMPLEMENTATION_CHECKLIST.md) — API 待辦與遷移時機
 
-*Last updated: 2026-04-10（Exchange Rate Drawer/Board 與狀態頁同步，Feedback Widget 現況保留）*
+*Last updated: 2026-04-10（Exchange Rate Drawer/Board 已同步，並補充後續匯率牌告板 UI 方向）*
 
 ## 備註
 

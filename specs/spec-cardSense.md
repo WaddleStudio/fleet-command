@@ -377,8 +377,22 @@ public List<CardRecommendation> recommend(RecommendationRequest req) {
 
 **前端互動現況**：
 - `RecommendationForm` 已使用 trigger button 開啟右側 drawer，先展示 dense 匯率牌告板。
-- 牌告板以 `POINTS` / `MILES` 分 section 顯示，沿用既有 `unit`、`note`、`exchangeRateSource` 與 `customExchangeRates`。
+- 牌告板以 `POINTS` / `MILES` 分 section 顯示，板面目前以 `unit`、`note` 與估值輸入為主。
 - `/calc` 仍保留為下一階段的共用入口，分享圖與更細的 program-level explainability 尚待補強。
+
+```text
+使用者心中匯率不同 -> 排名不同
+
+玩家 A（常換頭等艙）：1 哩 = 0.6 TWD -> 哩程卡排名上升
+玩家 B（只換經濟艙）：1 哩 = 0.3 TWD -> 現金回饋卡排名上升
+```
+
+**後續 UI 方向**：
+- 推薦頁與 `/calc` 應逐步收斂為 calculator 風格的「匯率牌告板」密集列表，而非跑馬燈。
+- 匯率板以上方基準列 + 下方估值列表呈現，左側為銀行 / 計畫 badge，中段為大數字估值，右側為狀態與估值輸入。
+- `/calc` 仍提供自訂點數價值能力，但視覺定位應從「進階設定折疊面板」提升為「專業估值工具面板」。
+- 推薦結果的 `estimatedReturn` 統一以 TWD 呈現，並附註所使用的匯率。
+
 ### 5.1 LLM 使用邊界
 
 ```
