@@ -43,7 +43,7 @@
 | 路徑/介面 | 角色 | 目標 | 主要依賴 |
 |------|------|------|----------|
 | `/calc` | 社群計算器 | 針對高消/複雜情境（哩程、保費）提供一鍵分析圖，主打社群分享裂變 | `POST /v1/recommendations/card` |
-| 推薦頁匯率牌告板 | RecommendationForm drawer | Trigger button + 右側 drawer 的 dense 匯率板，展示 `POINTS` / `MILES` 區塊；`/calc` 先不接入 | `POST /v1/recommendations/card` |
+| 推薦頁 / `/calc` 匯率牌告板 | Multi-surface shared UI | RecommendationForm 使用 trigger button + 右側 drawer；`/calc` 使用左欄 inline 工具面板，兩者共用 `POINTS` / `MILES` 匯率板與 override semantics | `POST /v1/recommendations/card` |
 | 我的卡包 (My Wallet) | 核心依賴轉換 | 把比價轉向「持卡最佳化」，讓用戶只需關心自己的小範圍卡庫 | `POST /v1/recommendations/card` (加卡片過濾) |
 | Checkout Widget | B2B2C 獲客點 | 做成供第三方電商結帳頁嵌入的 Snippet，在交易當下提醒省錢 | `POST /v1/recommendations/card` |
 | `/cards` 與 `/` | 基礎目錄 (維持堪用) | 滿足基礎查閱與 SEO，不花費過多精力包裝 | `GET /v1/cards` |
@@ -155,7 +155,7 @@ GitHub Organization
 ### 3.1.1 Frontend Delivery Surface
 
 - `cardsense-web` 作為獨立前端 repo，承接 `/`、`/cards`、`/calc` 三個主要路由。
-- `/calc` 明確不新增 API endpoint、不新增資料庫表，僅重用既有 `GET /v1/cards` 與 `POST /v1/recommendations/card`；推薦頁匯率牌告板則留在 `RecommendationForm` drawer。
+- `/calc` 明確不新增 API endpoint、不新增資料庫表，僅重用既有 `GET /v1/cards` 與 `POST /v1/recommendations/card`；匯率牌告板則以 shared UI 方式同時供 `RecommendationForm` drawer 與 `/calc` inline panel 使用。
 - `/calc` 的年度損失、分享圖片、CTA 導流與追蹤埋點皆屬前端責任，不改動 contracts 或 extractor 邊界。
 
 ### 3.2 資料流
@@ -371,7 +371,7 @@ public List<CardRecommendation> recommend(RecommendationRequest req) {
 
 這是 CardSense 的差異化核心之一。它解決的是：「同一張卡的回饋，對不同使用者到底值多少？」以及「點數 / 哩程如何在推薦演算法中被正確量化？」的問題。
 
-目前實作已落地到推薦頁的 trigger button + 右側 drawer 匯率牌告板，板內分成 `POINTS` / `MILES` 兩個 section；`/calc` 整合仍保留在後續迭代。
+目前實作已形成雙 surface：推薦頁使用 trigger button + 右側 drawer 匯率牌告板，`/calc` 使用左欄 inline 工具面板；兩者都分成 `POINTS` / `MILES` 兩個 section，並共用同一套 override/request semantics。
 
 **玩家自訂匯率 (Custom Rates)**：玩家可透過前端 UI 輸入自己心目中的點數/哩程價值（例如：「我覺得長榮哩程值 0.6 元」）。API 在 `RecommendationRequest` 中接收 `customExchangeRates` 後，會覆寫系統預設值，使排名演算法依照玩家的個人價值觀重新洗牌。
 

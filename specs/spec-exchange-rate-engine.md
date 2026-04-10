@@ -49,17 +49,17 @@
 ### 2.4 隞?鋆撥
 
 - [ ] 高階點數 / 哩程估值再細化，補齊銀行別與航空計畫 program-level 估值
-- [ ] `/calc` 接入同一套匯率牌告板
+- [x] `/calc` 接入同一套匯率牌告板（改為左欄 inline 工具面板）
 - [ ] 分享圖顯示本次使用匯率與估值來源
 - [ ] 將目前覆寫面板進一步收斂成 calculator 風格的 dense 匯率牌告板 UI
 
 ### 2.5 已上線的推薦頁匯率板
 
-RecommendationForm 先以 trigger button 開啟右側 drawer，讓使用者在推薦頁直接調整匯率估值，不必先進 `/calc`。
+RecommendationForm 以 trigger button 開啟右側 drawer，讓使用者在推薦頁直接調整匯率估值；`/calc` 也已接入同一套 shared board semantics，改用左欄 inline 工具面板承接 calculator 節奏。
 
 - `POINTS` / `MILES` 已以 section 分組，保留 `_DEFAULT` 與銀行 / 計畫別 row；板面只呈現 `unit` 與 `note`。
 - board row 只顯示 `unit` 與 `note`；自訂匯率由 recommendation flow 的 request/state 驅動。
-- `/calc` 的整合與分享圖聯動保留到下一階段。
+- 分享圖聯動與更細的 explainability 保留到下一階段。
 - 更細的 program-level explainability 仍是後續項目。
 
 ---

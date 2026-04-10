@@ -75,7 +75,7 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 ### cardsense-web（最活躍）
 
-**Latest**: `14d8a3f` — merge bugfix/exchange-rates-panel-crash
+**Latest**: `de68319` — feat: add exchange rate tool to calc
 
 **近期功能迭代**：
 - `14d8a3f` merge: bugfix/exchange-rates-panel-crash
@@ -110,7 +110,7 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 - `85cb93b` Add payment method selection to calculator
 
 **已完成功能**：
-- `/calc` 年度損失社群入口頁（計算機風格金額輸入、消費類別/場景選擇、回饋排名 bar chart、年度損失動畫計數器、Canvas 分享圖片生成）
+- `/calc` 年度損失社群入口頁（計算機風格金額輸入、消費類別/場景選擇、左欄 inline 匯率工具面板、回饋排名 bar chart、年度損失動畫計數器、Canvas 分享圖片生成）
 - 情境式推薦表單（金額、類別、子類別場景、通路、支付方式）
 - 疊加優惠計算（自動計算所有可疊加優惠總和）
 - 優惠明細展開（逐一列出回饋金額、條件、有效期）
@@ -500,7 +500,7 @@ SQLite → Supabase sync 上線，API prod 從 Supabase 讀取。
 目前產品重心已從「全站卡片推薦」逐步轉向「高價值情境入口 + 個人化工具 + B2B 能力」。以下是接續項目的優先順序：
 
 1. **高階點數 / 哩程估值深化 (`MILES` / `POINTS`)**：`MILES` API、基礎估值與 `rewardDetail` 已落地；下一步聚焦更細的銀行別點數 / 航空計畫估值與 explainability，主攻高階旅遊算卡情境。
-2. **即時匯率引擎 (Exchange Rate Engine)**：核心能力已上線（`/v1/exchange-rates`、`customExchangeRates`、`rewardDetail`、前端覆寫面板），推薦頁目前已改為 trigger button + right-side drawer 的 dense 匯率牌告板；下一步聚焦 `/calc` 接入與分享圖整合。
+2. **即時匯率引擎 (Exchange Rate Engine)**：核心能力已上線（`/v1/exchange-rates`、`customExchangeRates`、`rewardDetail`、前端覆寫面板），目前已形成雙入口：推薦頁為 trigger button + right-side drawer 的 dense 匯率牌告板，`/calc` 則為左欄 inline 工具面板；下一步聚焦分享圖整合與更細的估值 explainability。
 3. **Feedback Widget (Discord / Notion downstream)**：原生前端回報表單已可用，後續再串接 Discord webhook / Notion Database，形成完整資料修正迴圈。
 4. **我的卡包 (My Wallet Mode)**：前端已具備持卡勾選與結果過濾基礎，DecisionEngine 也可優先從持卡庫推薦；下一步是補齊長期保存、利差估算與回訪工作流。
 5. **`/calc` 社群工具生成極致化**：完善 Canvas 分享圖，針對保費、日韓高消等極端情境做深，成為論壇算卡首選截圖來源。
@@ -510,7 +510,7 @@ SQLite → Supabase sync 上線，API prod 從 Supabase 讀取。
 | 項目 | 狀態/優先級 | 說明 |
 |------|-------------|------|
 | **高階點數 / 哩程估值深化 (`MILES` / `POINTS`)** | 🔥 P0 (基礎完成，持續細化) | API / contracts / web 已打通，推薦頁已落地 drawer 版匯率牌告板；下一步補更細的銀行別 / 航空計畫估值與 explainability |
-| **即時匯率引擎 (Exchange Rate)** | 🔥 P0 (基礎完成) | `/v1/exchange-rates`、`customExchangeRates`、`rewardDetail`、推薦頁 drawer/board 已上線；下一步升級為 `/calc` 風格匯率牌告板 |
+| **即時匯率引擎 (Exchange Rate)** | 🔥 P0 (基礎完成) | `/v1/exchange-rates`、`customExchangeRates`、`rewardDetail`、推薦頁 drawer/board 與 `/calc` inline 工具面板已上線；下一步補分享圖與更細估值說明 |
 | **我的卡包 (My Wallet)** | 🔥 P0 (已啟動，待深化) | 前端持卡勾選與持卡優先推薦已到位，下一步補齊保存偏好、利差估算與回訪體驗 |
 | **Feedback Widget** | 🟡 P1 (原生版可用，待串接) | 站內回饋表單已可用，後續串接 Notion / Discord downstream |
 | 日期 condition API 過濾 | 🟡 P1 | DecisionEngine 支援 DAY_OF_MONTH / DAY_OF_WEEK 過濾 |
@@ -596,7 +596,7 @@ npm run dev                                       # http://localhost:5173
 - [CardSense Spec](./specs/spec-cardSense.md) — 完整專案規格說明書
 - [API Implementation Checklist](https://github.com/WaddleStudio/cardsense-api/blob/master/IMPLEMENTATION_CHECKLIST.md) — API 待辦與遷移時機
 
-*Last updated: 2026-04-10（Exchange Rate Drawer/Board 已同步，並補充後續匯率牌告板 UI 方向）*
+*Last updated: 2026-04-10（Exchange Rate 已同步到推薦頁 drawer 與 `/calc` inline panel，並補充後續分享圖 / explainability 方向）*
 
 ## 備註
 
