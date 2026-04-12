@@ -77,7 +77,10 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 **Latest**: `aa7deb1` — merge: calc settings two-column layout
 
+**Pending PR**: `cardsense-web` branch `agent/calc-wallet-rate-ui` at `f9e3912` (`feat: refine calc wallet and exchange rate UI`) is pushed and ready for PR to `master`.
+
 **近期功能迭代**：
+- `f9e3912` feat: refine calc wallet and exchange rate UI (pending PR: `agent/calc-wallet-rate-ui` -> `master`)
 - `aa7deb1` merge: calc settings two-column layout
 - `1c2fc18` feat: reorganize calc settings layout
 - `1a2ca50` docs: design calc settings two-column layout
@@ -115,6 +118,7 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 **已完成功能**：
 - `/calc` 年度損失社群入口頁（計算機風格金額輸入、消費類別/場景選擇、桌機雙欄設定區、My Wallet、卡片選擇、inline 匯率工具面板、回饋排名 bar chart、年度損失動畫計數器、Canvas 分享圖片生成）
+- Pending `agent/calc-wallet-rate-ui`: `/calc` keeps the calculator as the main visual, moves results below the settings card to avoid 1024px/max-width squeeze, upgrades My Wallet into a selected-card carousel with dots, and compresses the exchange-rate board into icon-led default/active rows with an expandable full bank-rate list.
 - 情境式推薦表單（金額、類別、子類別場景、通路、支付方式）
 - 疊加優惠計算（自動計算所有可疊加優惠總和）
 - 優惠明細展開（逐一列出回饋金額、條件、有效期）
@@ -509,6 +513,9 @@ SQLite → Supabase sync 上線，API prod 從 Supabase 讀取。
 4. **我的卡包 (My Wallet Mode)**：`/calc` 已完成本機 `localStorage` 卡包保存/還原、benefit-plan runtime 狀態保存、custom exchange rate 保存、restore-aware auto-select guard，以及 save / clear 控制面板；目前剩瀏覽器手動驗證與後續更進一步的回訪體驗優化。
 5. **`/calc` 社群工具生成極致化**：已把設定區重排成桌機雙欄，讓情境輸入與 My Wallet / Card Selector / 匯率工具同屏可見；下一步完善 Canvas 分享圖，針對保費、日韓高消等極端情境做深，成為論壇算卡首選截圖來源。
 6. **Checkout Widget (B2B2C API)**（長期潛力）：未來可能成為 CardSense 直接嵌入外部網站的銷售工具。
+
+2026-04-12 UI follow-up: `cardsense-web` branch `agent/calc-wallet-rate-ui` is pushed with a calculator-first `/calc` layout fix, My Wallet carousel, and compact exchange-rate board. Verification before push: `npm run build`, `npm run test:unit`, and targeted ESLint for touched files passed. Full `npm run lint` in `cardsense-web` still has pre-existing repo-wide lint noise from `.worktrees/**`, shadcn UI exports, and `AnnualLossBox`.
+
 ### 後續待辦狀態調整
 
 | 項目 | 狀態/優先級 | 說明 |
@@ -601,6 +608,8 @@ npm run dev                                       # http://localhost:5173
 - [API Implementation Checklist](https://github.com/WaddleStudio/cardsense-api/blob/master/IMPLEMENTATION_CHECKLIST.md) — API 待辦與遷移時機
 
 *Last updated: 2026-04-12（My Wallet v1 已落地，`/calc` 設定區已重排為桌機雙欄，Exchange Rate inline panel 與卡片/卡包工作流更靠近，後續聚焦瀏覽器驗證、分享圖與更細 explainability）*
+
+*Status sync: 2026-04-12 - `cardsense-web` pending PR `agent/calc-wallet-rate-ui` keeps the calculator primary, fixes the squeezed result area, adds My Wallet carousel navigation, and compacts the exchange-rate board with currency icons.*
 
 ## 備註
 
