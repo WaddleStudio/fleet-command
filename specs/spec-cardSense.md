@@ -1,12 +1,12 @@
 # CardSense — 完整專案規格說明書
-### Version 1.1 | 2026-03-27
+### Version 1.2 | 2026-04-17
 
 ---
 
 ## 1. 專案概述
 
 ### 1.1 一句話定位
-**確定性信用卡推薦平台：將銀行促銷文字轉化為結構化數據，用規則邏輯而非 LLM 產生可審計的刷卡建議，並透過 `/calc` 社群入口把陌生流量導入完整推薦與卡片目錄。**
+**確定性信用卡推薦平台：將銀行促銷文字轉化為結構化數據，用規則邏輯而非 LLM 產生可審計的刷卡建議。首頁即為算卡計算機，兼具社群傳播入口與個人卡包工具。**
 
 ### 1.2 問題陳述
 台灣消費者持有多張信用卡（平均 3-5 張），每張卡在不同通路、時段、門檻有不同回饋。現有比較平台（Money101、卡優）提供的是靜態文章式比較，無法根據用戶「當下消費場景」即時推薦最佳卡片。更大的問題是：銀行優惠經常更新，手動追蹤成本極高。
@@ -16,7 +16,7 @@
 1. **Extractor**：半自動從銀行官網抓取優惠文字，用 LLM（離線）轉為結構化資料
 2. **Contracts**：定義跨 repo 共用的資料結構和 API 契約
 3. **API**：接收消費場景，用確定性規則匹配最佳卡片，回傳可審計的推薦理由
-4. **Frontend Surfaces**：用完整推薦頁 `/`、卡片目錄 `/cards`、社群入口 `/calc` 承接 B2C 查詢、瀏覽與傳播
+4. **Frontend Surfaces**：首頁 `/` 算卡計算機（社群傳播入口 + My Wallet）、推薦表單 `/recommend`、卡片目錄 `/cards` 承接 B2C 查詢、瀏覽與傳播
 
 ### 1.4 為什麼刻意不用 LLM
 | 考量 | 說明 |
@@ -42,13 +42,12 @@
 
 | 路徑/介面 | 角色 | 目標 | 主要依賴 |
 |------|------|------|----------|
-| `/calc` | 社群計算器 | 針對高消/複雜情境（哩程、保費）提供一鍵分析圖，主打社群分享裂變 | `POST /v1/recommendations/card` |
-| 推薦頁 / `/calc` 匯率牌告板 | Multi-surface shared UI | RecommendationForm 使用 trigger button + 右側 drawer；`/calc` 使用左欄 inline 工具面板，兩者共用 `POINTS` / `MILES` 匯率板與 override semantics | `POST /v1/recommendations/card` |
-| 我的卡包 (My Wallet) | 核心依賴轉換 | 把比價轉向「持卡最佳化」，讓用戶只需關心自己的小範圍卡庫 | `POST /v1/recommendations/card` (加卡片過濾) |
+| `/`（首頁算卡計算機） | 社群傳播入口 + 個人卡包 | 高消/複雜情境一鍵分析圖、My Wallet 持卡最佳化、inline 匯率工具面板、Canvas 分享圖 | `POST /v1/recommendations/card` |
+| `/recommend`（推薦表單） | 完整推薦工具 | 詳細條件篩選、drawer 匯率牌告板 | `POST /v1/recommendations/card` |
 | Checkout Widget | B2B2C 獲客點 | 做成供第三方電商結帳頁嵌入的 Snippet，在交易當下提醒省錢 | `POST /v1/recommendations/card` |
 | `/cards` 與 `/` | 基礎目錄 (維持堪用) | 滿足基礎查閱與 SEO，不花費過多精力包裝 | `GET /v1/cards` |
 
-> `/calc` 的詳細互動、SEO、分享與元件規格，另見 `fleet-command/CardSense-Demo-Spec.md`，主規格只保留產品定位、KPI 與系統邊界。
+> 首頁計算機的實作現況與功能清單詳見 `fleet-command/CardSense-Status.md` cardsense-web 段落。
 
 ---
 
@@ -86,20 +85,20 @@ Revenue Streams
 | B2B Clients | 付費 API 客戶數 | 3 |
 | MRR | 月經常性收入 | $200 |
 
-### 2.2.1 B2C 傳播漏斗（`/calc`）
+### 2.2.1 B2C 傳播漏斗（首頁計算機）
 
 | 指標 | 定義 | Phase 2 目標 |
 |------|------|-------------|
 | 計算完成率 | `calc_submit / calc_page_view` | > 60% |
 | 分享率 | `calc_share / calc_result` | > 10% |
 | 跳轉推薦頁率 | `calc_cta_click(recommend) / calc_result` | > 30% |
-| 社群來源流量 | 帶 `ref` 參數的 `/calc` page view | 追蹤即可 |
+| 社群來源流量 | 帶 `ref` 參數的首頁 page view | 追蹤即可 |
 
 ### 2.3 成本結構 (MVP)
 
 | 項目 | 月成本 | 備註 |
 |------|--------|------|
-| Railway (API hosting) | $5-10 | Spring Boot + PostgreSQL |
+| Render (API hosting) + Supabase | $0-10 | Spring Boot + PostgreSQL |
 | Gemini AI Studio | $0 | 免費額度足夠 extraction |
 | 網域 | ~$1 | 年費 $12 |
 | Alan 的時間 (8-10hr/week) | — | 主要成本 |
@@ -119,93 +118,99 @@ Revenue Streams
 
 ## 3. 系統架構
 
-### 3.1 三 Repo 架構
+### 3.1 四 Repo 架構
 
 ```
-GitHub Organization
+GitHub Organization (WaddleStudio)
 │
-├── cardsense-contracts
-│   ├── src/main/java/com/cardsense/contracts/
-│   │   ├── model/          ← 共用資料模型 (Card, Promotion, Recommendation)
-│   │   ├── dto/            ← API 請求/回應 DTO
-│   │   └── enums/          ← 消費類別、銀行代碼、回饋類型
-│   ├── build.gradle.kts
-│   └── 發佈到 Maven Local / GitHub Packages
+├── cardsense-contracts          ← 共用資料契約（JSON Schema）
+│   ├── promotion/               ← promotion-normalized.schema.json + 範例
+│   ├── recommendation/          ← request / response JSON Schema + 範例
+│   ├── taxonomy/                ← category / subcategory / channel / merchant-registry / payment-registry
+│   └── 無 build 產物，各 repo 直接引用 JSON Schema
 │
-├── cardsense-extractor
-│   ├── src/main/java/com/cardsense/extractor/
-│   │   ├── scraper/        ← 銀行網頁爬蟲 (Jsoup / Playwright)
-│   │   ├── parser/         ← LLM 驅動的文字→結構化解析
-│   │   ├── validator/      ← 結果驗證 (規則檢查 + 人工抽驗)
-│   │   └── loader/         ← 寫入 PostgreSQL
-│   ├── 依賴: cardsense-contracts
-│   └── 排程: 每日 / 銀行公告觸發
+├── cardsense-extractor          ← 銀行優惠資料擷取與正規化（Python）
+│   ├── extractor/               ← 5 家銀行 real extractor（esun / cathay / taishin / fubon / ctbc）
+│   │   ├── promotion_rules.py   ← reward / category / condition / subcategory heuristics
+│   │   └── page_extractors/     ← shared HTML section extraction
+│   ├── jobs/                    ← refresh_and_deploy.py、import_jsonl_to_db.py、各銀行 job
+│   ├── sql/                     ← SQLite schema
+│   ├── 技術棧: Python 3.13+ / uv / Pydantic / Playwright / SQLite + Supabase sync
+│   └── 執行: 本機手動觸發（uv run）
 │
-└── cardsense-api
-    ├── src/main/java/com/cardsense/api/
-    │   ├── controller/     ← REST endpoints
-    │   ├── service/        ← 推薦邏輯（確定性規則引擎）
-    │   ├── repository/     ← Spring Data JPA
-    │   ├── security/       ← JWT + API Key 驗證
-    │   └── config/         ← RBAC, Rate Limiting
-    ├── 依賴: cardsense-contracts
-    └── 部署: Railway
+├── cardsense-api                ← 情境推薦 REST API（Java）
+│   ├── src/main/java/com/cardsense/api/
+│   │   ├── controller/          ← REST endpoints
+│   │   ├── service/             ← DecisionEngine（確定性規則引擎）、RewardCalculator、ExchangeRateService
+│   │   ├── repository/          ← SqlitePromotionRepository / SupabasePromotionRepository
+│   │   └── config/              ← CorsConfig、ApiKeyFilter
+│   ├── 技術棧: Java 21 / Spring Boot / Maven / SQLite + Supabase
+│   └── 部署: Render（prod 連 Supabase PostgreSQL）
+│
+└── cardsense-web                ← 前端展示
+    ├── src/
+    │   ├── pages/               ← 首頁算卡計算機 / 推薦表單 / 卡片目錄 / 卡片詳情
+    │   ├── components/          ← 共用元件（FilterChip、SubcategoryGrid、PlanSwitchBadge 等）
+    │   └── lib/                 ← taxonomy.ts（從 contracts JSON 衍生）、API client
+    ├── 技術棧: React 19 / TypeScript 5.9 / Vite 8 / Tailwind CSS 4 / shadcn/ui / React Router 7
+    └── 部署: Vercel
 ```
+
+> 所有 repo 集中於 workspace 根目錄統一管理（無 git 版控，各 repo 獨立版控）。
 
 ### 3.1.1 Frontend Delivery Surface
 
-- `cardsense-web` 作為獨立前端 repo，承接 `/`、`/cards`、`/calc` 三個主要路由。
-- `/calc` 明確不新增 API endpoint、不新增資料庫表，僅重用既有 `GET /v1/cards` 與 `POST /v1/recommendations/card`；匯率牌告板則以 shared UI 方式同時供 `RecommendationForm` drawer 與 `/calc` inline panel 使用。
-- `/calc` 的年度損失、分享圖片、CTA 導流與追蹤埋點皆屬前端責任，不改動 contracts 或 extractor 邊界。
+- `cardsense-web` 承接 `/`（首頁算卡計算機）、`/recommend`（推薦表單）、`/cards`（卡片目錄）、`/cards/:cardCode`（卡片詳情）四個主要路由。
+- 首頁計算機不新增 API endpoint、不新增資料庫表，重用既有 `GET /v1/cards` 與 `POST /v1/recommendations/card`；匯率牌告板以 shared UI 方式同時供 `/recommend` drawer 與首頁 inline panel 使用。
+- 首頁已整合 My Wallet（本機卡包保存）、自訂匯率覆寫、Canvas 分享圖片生成、年度損失動畫計數器。
 
 ### 3.2 資料流
 
 ```
-                    離線 Pipeline (每日)
-                    ┌─────────────────────────────────────┐
-                    │                                     │
- 銀行官網 ─── 爬蟲 ─┤─── Gemini Flash ─── 結構化 JSON    │
- (HTML)    (Jsoup/  │   (促銷文字解析)   (Promotion DTO) │
-            PW)     │                                     │
-                    │─── Validator ─── PostgreSQL          │
-                    │   (規則檢查)    (promotions 表)      │
-                    └─────────────────────────────────────┘
+離線 Pipeline（本機手動觸發）
 
-                    線上 API (即時)
-                    ┌─────────────────────────────────────┐
- 用戶請求 ──────────┤                                     │
- {                  │  API Key 驗證                       │
-   category: "餐飲", │       │                             │
-   amount: 1200,    │  規則引擎 (確定性)                   │
-   cards: ["中信", │       │                             │
-           "玉山"]  │  排序 + 推薦理由                    │
- }                  │       │                             │
-                    │  回應 (< 50ms)                      │
- ◄──────────────────┤  {                                  │
-                    │    best_card: "中信",                │
-                    │    cashback: "3%",                   │
-                    │    reason: "餐飲類 3% 回饋...",      │
-                    │    promotion_id: "promo_123",        │
-                    │    valid_until: "2026-03-31",        │
-                    │    audit_trail: {...}                │
-                    │  }                                   │
-                    └─────────────────────────────────────┘
+銀行官網 ──→ Extractor (Python) ──→ JSONL ──→ SQLite ──→ Supabase
+              │                        │            │
+              │  scrape (HTML/JSON/    │  local DB   │  PostgreSQL (prod)
+              │   Playwright/CF BR)   │  promotion_ │  promotion_current
+              │  parse_rules →        │  current    │
+              │  normalize → validate │             │
+              │  → version            │             │
+              ▼                       ▼             ▼
+        cardsense-contracts     cardsense-contracts
+        (JSON Schema 驗證)      (taxonomy 參照)
+
+線上 API（即時）
+
+用戶請求 ──→ API (Render) ──→ DecisionEngine ──→ 回應
+              │                    │
+              │  Supabase 讀取     │  確定性規則引擎
+              │  promotion_current │  subcategory 過濾
+              │                    │  condition 匹配
+              │                    │  RewardCalculator
+              │                    │  ExchangeRateService
+              ▼                    ▼
+        排序 + 推薦理由 + rewardDetail
+
+Frontend (Vercel) ──→ 呼叫 API ──→ 首頁計算機 / 推薦表單 / 卡片目錄
 ```
 
 ### 3.3 技術選型
 
 | 層 | 選擇 | 理由 |
 |----|------|------|
-| 語言 | Java 21 | 金融場景慣例、型別安全、生態成熟 |
-| 框架 | Spring Boot 4 | 企業級穩定性、Security + JPA 內建 |
-| DB | PostgreSQL (Supabase) | JSONB 存促銷結構、版本化、免費起步 |
-| ORM | Spring Data JPA | 與 Spring 生態深度整合 |
-| 爬蟲 | Jsoup + Playwright (備) | Jsoup 處理靜態頁、Playwright 處理 SPA |
-| LLM (離線) | Gemini Flash (AI Studio) | 免費額度、結構化輸出能力強 |
-| LLM (備選) | Mistral OCR 3 | 銀行 PDF 文件解析 |
-| API 認證 | JWT + API Key | B2B 用 API Key、B2C 用 JWT |
-| 部署 | Railway | Spring Boot 友好、PostgreSQL addon |
-| CI/CD | GitHub Actions | 三 repo 統一 pipeline |
+| API 語言 | Java 21 | 金融場景慣例、型別安全、生態成熟 |
+| API 框架 | Spring Boot | 企業級穩定性、repository 抽象 |
+| Extractor 語言 | Python 3.13+ / uv | Pydantic 驗證、Playwright 瀏覽器自動化、快速迭代 |
+| 契約 | JSON Schema | 語言中立、跨 repo 驗證、前端可直接 import |
+| DB (prod) | PostgreSQL (Supabase) | 版本化、免費起步 |
+| DB (local) | SQLite | 零配置開發環境、extractor 直接寫入 |
+| 爬蟲 | Playwright + Cloudflare Browser Rendering | 反爬蟲銀行（Taishin / Fubon）需瀏覽器渲染 |
+| 前端 | React 19 / Vite 8 / Tailwind CSS 4 / shadcn/ui | 快速建構 fintech 風格 UI、深色模式、RWD |
+| 前端路由 | React Router 7 | SPA 路由，Vercel 部署友好 |
+| API 認證 | API Key | public endpoints 免驗，B2B 端點需 key |
+| API 部署 | Render | Spring Boot 友好、free tier |
+| 前端部署 | Vercel | React SPA 自動部署、邊緣快取 |
 
 ---
 
@@ -371,14 +376,14 @@ public List<CardRecommendation> recommend(RecommendationRequest req) {
 
 這是 CardSense 的差異化核心之一。它解決的是：「同一張卡的回饋，對不同使用者到底值多少？」以及「點數 / 哩程如何在推薦演算法中被正確量化？」的問題。
 
-目前實作已形成雙 surface：推薦頁使用 trigger button + 右側 drawer 匯率牌告板，`/calc` 使用左欄 inline 工具面板；兩者都分成 `POINTS` / `MILES` 兩個 section，並共用同一套 override/request semantics。
+目前實作已形成雙 surface：`/recommend` 推薦頁使用 trigger button + 右側 drawer 匯率牌告板，首頁計算機使用左欄 inline 工具面板；兩者都分成 `POINTS` / `MILES` 兩個 section，並共用同一套 override/request semantics。
 
 **玩家自訂匯率 (Custom Rates)**：玩家可透過前端 UI 輸入自己心目中的點數/哩程價值（例如：「我覺得長榮哩程值 0.6 元」）。API 在 `RecommendationRequest` 中接收 `customExchangeRates` 後，會覆寫系統預設值，使排名演算法依照玩家的個人價值觀重新洗牌。
 
 **前端互動現況**：
 - `RecommendationForm` 已使用 trigger button 開啟右側 drawer，先展示 dense 匯率牌告板。
 - 牌告板以 `POINTS` / `MILES` 分 section 顯示，板面目前會顯示來源類型、context、`note` 與估值輸入。
-- `/calc` 已補上分享圖中的估值來源摘要；推薦結果也已顯示 `rewardDetail` 的換算式、估值來源與 note。API 端目前也已能依 promotion metadata 與 airline alias 命中首批 miles profile row（如 `ASIA_MILES`、`EVA_INFINITY`、`JALPAK`），更完整的 program-level explainability 仍待補強。
+- 首頁計算機已補上分享圖中的估值來源摘要；推薦結果也已顯示 `rewardDetail` 的換算式、估值來源與 note。API 端目前也已能依 promotion metadata 與 airline alias 命中首批 miles profile row（如 `ASIA_MILES`、`EVA_INFINITY`、`JALPAK`），更完整的 program-level explainability 仍待補強。
 
 ```text
 使用者心中匯率不同 -> 排名不同
@@ -388,9 +393,9 @@ public List<CardRecommendation> recommend(RecommendationRequest req) {
 ```
 
 **後續 UI 方向**：
-- 推薦頁與 `/calc` 應逐步收斂為 calculator 風格的「匯率牌告板」密集列表，而非跑馬燈。
+- 推薦頁與首頁計算機應逐步收斂為 calculator 風格的「匯率牌告板」密集列表，而非跑馬燈。
 - 匯率板以上方基準列 + 下方估值列表呈現，左側為銀行 / 計畫 badge，中段為大數字估值，右側為狀態與估值輸入。
-- `/calc` 仍提供自訂點數價值能力，但視覺定位應從「進階設定折疊面板」提升為「專業估值工具面板」。
+- 首頁計算機仍提供自訂點數價值能力，視覺定位為「專業估值工具面板」。
 - 推薦結果的 `estimatedReturn` 統一以 TWD 呈現，並附註所使用的匯率。
 
 ### 5.1 LLM 使用邊界
@@ -534,7 +539,7 @@ DataExtractor (事件觸發)
 | 階段 | 成功條件 | 退出條件 |
 |------|---------|---------|
 | Phase 1 | 5 家銀行支援 / 穩定 API (< 100ms) / 疊加正確 | Extraction 準確率長期落後無法收斂 |
-| Phase 2 | /calc 成功在特定社群產生討論與分享案例 | 上線 My Wallet 無法提升用戶回訪與依賴 |
+| Phase 2 | 首頁計算機成功在特定社群產生討論與分享案例 | 上線 My Wallet 無法提升用戶回訪與依賴 |
 | Phase 3 | 成功談成至少一家 Widget 平台合作 | 轉換率過低，或無法透過導流拿到 CPA |
 | Phase 4 | 穩定產生 $2K 收入 (首刷分潤與 API 訂閱) | 連續 3 個月下滑或停滯 |
 
@@ -544,34 +549,18 @@ DataExtractor (事件觸發)
 
 ---
 
-## 10. 下一步行動 (Sprint 1)
+## 10. Sprint 1 回顧（已完成）
 
-```
-Sprint 1 目標：5 家銀行資料 + API 可呼叫
+Sprint 1 目標已全數達成：
 
-Week 1-2:
-  □ cardsense-contracts: 確定 Promotion / Card / Bank 的 Java record 定義
-  □ cardsense-api: Spring Boot 骨架 + PostgreSQL 連接 + health check
-  □ cardsense-api: /recommend endpoint (硬編碼 3 張卡測試)
+- ✅ cardsense-contracts：JSON Schema 定義穩定（Promotion / Recommendation / Taxonomy）
+- ✅ cardsense-extractor：5 家銀行 real extractor（Python / uv / Playwright）
+- ✅ cardsense-api：Spring Boot + DecisionEngine，Render 部署，Supabase prod
+- ✅ cardsense-web：首頁算卡計算機（原 `/calc` 升為 `/`）+ 推薦表單 `/recommend` + 卡片目錄，Vercel 部署
+- ✅ 100 張卡 813 筆優惠（628 RECOMMENDABLE）
 
-Week 3-4:
-  □ cardsense-extractor: 選定第一家銀行 (建議中信，優惠最多)
-  □ cardsense-extractor: Jsoup 爬蟲 + Gemini Flash extraction
-  □ cardsense-extractor: 人工驗證第一批資料
-
-Week 5-6:
-  □ 擴展到 5 家銀行
-  □ cardsense-api: 接上真實資料
-  □ cardsense-api: API Key 認證 + rate limiting
-  □ 部署到 Railway
-
-Sprint 1 交付物:
-  ✅ 5 家銀行的結構化優惠資料 (PostgreSQL)
-  ✅ /recommend API endpoint (< 100ms)
-  ✅ API Key 認證
-  ✅ Railway 部署 + health monitoring
-```
+目前進度與 Roadmap 詳見 `fleet-command/CardSense-Status.md`。
 
 ---
 
-*Owner: Alan | Created: 2026-02-25 | Priority: 🔴 最高 | Next: Sprint 1 Week 1*
+*Owner: Alan | Created: 2026-02-25 | Priority: 🔴 最高*

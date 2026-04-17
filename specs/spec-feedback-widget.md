@@ -131,7 +131,7 @@
 - [ ] Notion Database downstream integration
 - [ ] Discord webhook downstream integration
 - [ ] 後台 triage workflow（標籤、指派、修復狀態）
-- [ ] 針對 `/calc` 或推薦結果自動補更多 domain-specific context
+- [ ] 針對首頁計算機或推薦結果自動補更多 domain-specific context
 
 ---
 

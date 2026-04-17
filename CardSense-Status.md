@@ -52,7 +52,7 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 | cardsense-contracts | ✅ 完成 | Promotion / Recommendation / Stackability schema 穩定，9 大消費類別（新增 TRAVEL 旅遊）、merchant registry（190+ 筆，含 35+ 飯店/餐廳品牌）、subcategory→category 自動重映射、taxonomy 整合完成；Recommendation contracts 已支援 `MILES`、`customExchangeRates`、`rewardDetail` |
 | cardsense-extractor | ✅ 核心完成 | E.SUN + Cathay + TAISHIN + FUBON + CTBC real extractor、subcategory inference、subcategory→category remap、JSONL + SQLite 匯入、refresh_and_deploy |
 | cardsense-api | ✅ 核心完成 + 已部署 | 情境推薦、疊加優惠計算、break-even、subcategory 場景過濾、scope/eligibilityType/通路 condition 匹配；VENUE 跨類別匹配（hotel brand 同時命中 DINING + TRAVEL）；Exchange Rate Engine（`MILES` / `POINTS` 折算、`rewardDetail`、`/v1/exchange-rates`）已上線；Render 上線 |
-| cardsense-web | ✅ MVP 完成 + 已部署 | 推薦表單 + 卡片目錄 + SubcategoryGrid 場景選擇 + `/calc` 社群入口頁 + merchantName 輸入/提示 + 深色模式 + RWD + fintech UI；已支援自訂點數/里程估值與 reward detail 顯示；原生 feedback widget 可用 |
+| cardsense-web | ✅ MVP 完成 + 已部署 | 首頁即算卡計算機（原 `/calc` 已升為 `/` 首頁）+ 卡片目錄 + SubcategoryGrid 場景選擇 + merchantName 輸入/提示 + My Wallet + inline 匯率工具 + 深色模式 + RWD + fintech UI；原生 feedback widget 可用 |
 | 資料庫遷移 | ✅ 完成 | SQLite → Supabase sync 已上線；API prod 從 Supabase 讀取 |
 | 銀行擴充 | ✅ Phase 1 完成 | 5 家銀行上線（E.SUN / Cathay / Taishin / Fubon / CTBC），801 筆優惠 |
 | 資料品質 | ✅ P1 完成 | general reward expansion、分類器精確化、Unicard 百大展開、飯店 VENUE 標注、TRAVEL 類別新增、跨類別 VENUE 匹配；9 大消費類別穩定 |
@@ -75,12 +75,10 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 ### cardsense-web（最活躍）
 
-**Latest**: `aa7deb1` — merge: calc settings two-column layout
-
-**Pending PR**: `cardsense-web` branch `agent/calc-wallet-rate-ui` at `f9e3912` (`feat: refine calc wallet and exchange rate UI`) is pushed and ready for PR to `master`.
+**Latest**: `4d4a0e6` — Merge PR #3: refine calc wallet and exchange rate UI
 
 **近期功能迭代**：
-- `f9e3912` feat: refine calc wallet and exchange rate UI (pending PR: `agent/calc-wallet-rate-ui` -> `master`)
+- `4d4a0e6` Merge PR #3: refine calc wallet and exchange rate UI
 - `aa7deb1` merge: calc settings two-column layout
 - `1c2fc18` feat: reorganize calc settings layout
 - `1a2ca50` docs: design calc settings two-column layout
@@ -117,8 +115,8 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 - `85cb93b` Add payment method selection to calculator
 
 **已完成功能**：
-- `/calc` 年度損失社群入口頁（計算機風格金額輸入、消費類別/場景選擇、桌機雙欄設定區、My Wallet、卡片選擇、inline 匯率工具面板、回饋排名 bar chart、年度損失動畫計數器、Canvas 分享圖片生成）
-- Pending `agent/calc-wallet-rate-ui`: `/calc` keeps the calculator as the main visual, moves results below the settings card to avoid 1024px/max-width squeeze, upgrades My Wallet into a selected-card carousel with dots, and compresses the exchange-rate board into icon-led default/active rows with an expandable full bank-rate list.
+- 首頁算卡計算機（原 `/calc` 已升為 `/` 首頁；推薦表單移至 `/recommend`）：計算機風格金額輸入、消費類別/場景選擇、桌機雙欄設定區、My Wallet 輪播、卡片選擇、inline 匯率工具面板、回饋排名 bar chart、年度損失動畫計數器、Canvas 分享圖片生成
+- PR #3 已合併：計算機為主視覺、結果區移至設定卡下方避免擠壓、My Wallet 升級為已選卡片輪播、匯率板壓縮為圖示列 + 可展開完整牌告。
 - 情境式推薦表單（金額、類別、子類別場景、通路、支付方式）
 - 疊加優惠計算（自動計算所有可疊加優惠總和）
 - 優惠明細展開（逐一列出回饋金額、條件、有效期）
@@ -371,7 +369,7 @@ taxonomy/      → category / channel / frequency / subcategory / merchant-regis
 
 ### Phase 2：前端 + 社群入口 ✅
 
-推薦頁、卡片目錄、`/calc` 社群入口頁、break-even 視覺化、深色模式、RWD。
+首頁算卡計算機（原 `/calc`）、推薦頁、卡片目錄、break-even 視覺化、深色模式、RWD。
 
 ### Phase 3：資料庫遷移 ✅
 
@@ -508,28 +506,28 @@ SQLite → Supabase sync 上線，API prod 從 Supabase 讀取。
 目前產品重心已從「全站卡片推薦」逐步轉向「高價值情境入口 + 個人化工具 + B2B 能力」。以下是接續項目的優先順序：
 
 1. **高階點數 / 哩程估值深化 (`MILES` / `POINTS`)**：`MILES` API、基礎估值與 `rewardDetail` 已落地；目前已補上 profile-aware 哩程估值解析，會依 `cardCode` / `cardName` / `title` / `conditions` 命中如 `ASIA_MILES`、`EVA_INFINITY`、`JALPAK` 等 program row，也已涵蓋 `Cathay Pacific` / `Japan Airlines` 這類 alias 訊號，下一步再擴更多航空計畫與轉點情境。
-2. **即時匯率引擎 (Exchange Rate Engine)**：核心能力已上線（`/v1/exchange-rates`、`customExchangeRates`、`rewardDetail`、前端覆寫面板），目前已形成雙入口：推薦頁為 trigger button + right-side drawer 的 dense 匯率牌告板，`/calc` 則為設定區內的 inline 工具面板，並已在桌機版與 My Wallet / Card Selector 並列成更短的雙欄工作流；分享圖也已帶入本次估值來源摘要，推薦結果已補上換算式、估值來源與 note，牌告板 row 也已補上來源類型與 context，下一步聚焦更細的估值 explainability。
+2. **即時匯率引擎 (Exchange Rate Engine)**：核心能力已上線（`/v1/exchange-rates`、`customExchangeRates`、`rewardDetail`、前端覆寫面板），目前已形成雙入口：`/recommend` 推薦頁為 trigger button + right-side drawer 的 dense 匯率牌告板，首頁計算機則為設定區內的 inline 工具面板，並已在桌機版與 My Wallet / Card Selector 並列成更短的雙欄工作流；分享圖也已帶入本次估值來源摘要，推薦結果已補上換算式、估值來源與 note，牌告板 row 也已補上來源類型與 context，下一步聚焦更細的估值 explainability。
 3. **Feedback Widget (Discord / Notion downstream)**：原生前端回報表單已可用，後續再串接 Discord webhook / Notion Database，形成完整資料修正迴圈。
-4. **我的卡包 (My Wallet Mode)**：`/calc` 已完成本機 `localStorage` 卡包保存/還原、benefit-plan runtime 狀態保存、custom exchange rate 保存、restore-aware auto-select guard，以及 save / clear 控制面板；目前剩瀏覽器手動驗證與後續更進一步的回訪體驗優化。
-5. **`/calc` 社群工具生成極致化**：已把設定區重排成桌機雙欄，讓情境輸入與 My Wallet / Card Selector / 匯率工具同屏可見；下一步完善 Canvas 分享圖，針對保費、日韓高消等極端情境做深，成為論壇算卡首選截圖來源。
+4. **我的卡包 (My Wallet Mode)**：首頁計算機已完成本機 `localStorage` 卡包保存/還原、benefit-plan runtime 狀態保存、custom exchange rate 保存、restore-aware auto-select guard，以及 save / clear 控制面板；目前剩瀏覽器手動驗證與後續更進一步的回訪體驗優化。
+5. **首頁社群工具生成極致化**：已把設定區重排成桌機雙欄，讓情境輸入與 My Wallet / Card Selector / 匯率工具同屏可見；下一步完善 Canvas 分享圖，針對保費、日韓高消等極端情境做深，成為論壇算卡首選截圖來源。
 6. **Checkout Widget (B2B2C API)**（長期潛力）：未來可能成為 CardSense 直接嵌入外部網站的銷售工具。
 
-2026-04-12 UI follow-up: `cardsense-web` branch `agent/calc-wallet-rate-ui` is pushed with a calculator-first `/calc` layout fix, My Wallet carousel, and compact exchange-rate board. Verification before push: `npm run build`, `npm run test:unit`, and targeted ESLint for touched files passed. Full `npm run lint` in `cardsense-web` still has pre-existing repo-wide lint noise from `.worktrees/**`, shadcn UI exports, and `AnnualLossBox`.
+2026-04-12 UI follow-up: PR #3 merged — calculator-first layout, My Wallet carousel, compact exchange-rate board。原 `/calc` 已升為 `/` 首頁，推薦表單移至 `/recommend`。
 
 ### 後續待辦狀態調整
 
 | 項目 | 狀態/優先級 | 說明 |
 |------|-------------|------|
 | **高階點數 / 哩程估值深化 (`MILES` / `POINTS`)** | 🔥 P0 (基礎完成，持續細化) | API / contracts / web 已打通，推薦頁已落地 drawer 版匯率牌告板；`RewardCalculator` / `ExchangeRateService` 已能依 promotion metadata 與 airline alias 命中 miles profile row，下一步補更多航空計畫 / 轉點情境與 explainability |
-| **即時匯率引擎 (Exchange Rate)** | 🔥 P0 (基礎完成) | `/v1/exchange-rates`、`customExchangeRates`、`rewardDetail`、推薦頁 drawer/board、`/calc` inline 工具面板、分享圖估值來源摘要與推薦結果換算式/來源 note 已上線；`/calc` 桌機版已把匯率工具放進 My Wallet / Card Selector 附近的雙欄設定工作流；下一步補更細估值說明 |
-| **我的卡包 (My Wallet)** | ✅ P0（v1 已完成） | `/calc` 已支援保存/還原 selected cards、active plans、runtime fields、custom exchange rates；尚待瀏覽器手動驗證與後續體驗深化 |
+| **即時匯率引擎 (Exchange Rate)** | 🔥 P0 (基礎完成) | `/v1/exchange-rates`、`customExchangeRates`、`rewardDetail`、`/recommend` drawer/board、首頁 inline 工具面板、分享圖估值來源摘要與推薦結果換算式/來源 note 已上線；首頁桌機版已把匯率工具放進 My Wallet / Card Selector 附近的雙欄設定工作流；下一步補更細估值說明 |
+| **我的卡包 (My Wallet)** | ✅ P0（v1 已完成） | 首頁計算機已支援保存/還原 selected cards、active plans、runtime fields、custom exchange rates；尚待瀏覽器手動驗證與後續體驗深化 |
 | **Feedback Widget** | 🟡 P1 (原生版可用，待串接) | 站內回饋表單已可用，後續串接 Notion / Discord downstream |
 | 日期 condition API 過濾 | 🟡 P1 | DecisionEngine 支援 DAY_OF_MONTH / DAY_OF_WEEK 過濾 |
 | `stackability` 顯式欄位 | 🟢 P2 | 拆出 SQLite 欄位，取代 `raw_payload_enums` 還原 |
 | 擴充 COBRANDED_RETAILER_SIGNALS | 🟢 P2 | 持續擴充實體聯名通路，不盲目追求冷門邊緣卡 |
 | Fubon targeted re-extraction | 🟢 P2 | 補回 INSURANCE/INFINITE/DIGITALLIFE 3 張卡 |
-| `/calc` 社群投放 | 🚀 隨機進行 | 定期於 PTT、Dcard 回文投放高水準的算卡比較圖 |
-| **API 商業化 (Stripe Billing)** | ⏸️ 暫緩 | 延後，先以 `/calc` 擴散與 B2B Widget 建立不可替代性為主 |
+| 首頁社群投放 | 🚀 隨機進行 | 定期於 PTT、Dcard 回文投放高水準的算卡比較圖 |
+| **API 商業化 (Stripe Billing)** | ⏸️ 暫緩 | 延後，先以首頁計算機擴散與 B2B Widget 建立不可替代性為主 |
 | **新銀行擴充 (MEGA / FIRST等)** | ⏸️ 暫緩 | 凍結廣度擴張，先靠主力 5 家銀行打通「我的卡包」完整體驗 |
 | **傳統卡片目錄/介紹頁深度優化** | ⏸️ 暫緩 | 維持堪用即可，不與純內容行銷比價網做靜態頁面競賽 |
 
@@ -603,13 +601,11 @@ npm run dev                                       # http://localhost:5173
 - [cardsense-extractor](https://github.com/WaddleStudio/cardsense-extractor) — 資料擷取 pipeline、5 銀行 extractor、SQLite 匯入
 - [cardsense-api](https://github.com/WaddleStudio/cardsense-api) — 推薦 API、疊加優惠計算、benefit plan / subcategory、Postman collection
 - [cardsense-web](https://github.com/WaddleStudio/cardsense-web) — 前端展示、推薦表單、卡片目錄、深色模式
-- [CardSense Demo Spec](./CardSense-Demo-Spec.md) — `/calc` 社群入口頁詳細規格
+- [CardSense Spec](./specs/spec-cardSense.md) — 完整專案規格說明書（商業模式、架構、資料模型）
 - [CardSense Spec](./specs/spec-cardSense.md) — 完整專案規格說明書
 - [API Implementation Checklist](https://github.com/WaddleStudio/cardsense-api/blob/master/IMPLEMENTATION_CHECKLIST.md) — API 待辦與遷移時機
 
-*Last updated: 2026-04-12（My Wallet v1 已落地，`/calc` 設定區已重排為桌機雙欄，Exchange Rate inline panel 與卡片/卡包工作流更靠近，後續聚焦瀏覽器驗證、分享圖與更細 explainability）*
-
-*Status sync: 2026-04-12 - `cardsense-web` pending PR `agent/calc-wallet-rate-ui` keeps the calculator primary, fixes the squeezed result area, adds My Wallet carousel navigation, and compacts the exchange-rate board with currency icons.*
+*Last updated: 2026-04-17 — 原 `/calc` 已升為 `/` 首頁（CalcPage = index route），推薦表單移至 `/recommend`。My Wallet 輪播、compact exchange-rate board 已上線，後續聚焦瀏覽器驗證、分享圖與更細 explainability。*
 
 ## 備註
 
@@ -617,6 +613,6 @@ npm run dev                                       # http://localhost:5173
 - 若 benefit-plan 或 eligibility heuristic 有變更，須重跑 `refresh_and_deploy.py` 才會反映到前端
 - 部分 `ESUN_UNICARD` 和 `TAISHIN_RICHART` 的 coarse rows（`OTHER + GENERAL`、混合 condition）目前保持保守輸出，待後續決定是否進一步細化
 - Benefit-plan 相關的詳細設計與工作流程見：
-  - `fleet-command/CardSense-Benefit-Plan-Implementation-Plan.md`
+  - `fleet-command/CardSense-Bank-Promo-Review-Workflow.md`（含 benefit-plan proven patterns）
   - `fleet-command/CardSense-Bank-Promo-Review-Workflow.md`
   - `cardsense-extractor/skills/cardsense-bank-promo-review`

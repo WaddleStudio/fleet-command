@@ -26,7 +26,7 @@ ext:      .md / .txt
 
 | 專案 | 定位 | 技術棧 | 狀態 |
 |------|------|--------|------|
-| **CardSense** | 信用卡推薦 API（確定性規則引擎） | Java 21 / Spring Boot / React 19 / Vite / Python 3.13 / Supabase | ✅ Live（5 銀行、/calc 社群入口） |
+| **CardSense** | 信用卡推薦 API（確定性規則引擎） | Java 21 / Spring Boot / React 19 / Vite / Python 3.13 / Supabase | ✅ Live（5 銀行、首頁算卡計算機） |
 | **ReviewTrustAnalyzer** | Google Maps 評論信任度分析 | Python / FastAPI / pgvector | V1 ✅ |
 | **SEEDCRAFT** | LINE-first 家庭教育教練 | Python / FastAPI / LINE SDK / Next.js | Rebrand ✅ |
 | **TechTrend** | B2B 技術週刊（NotebookLM → SaaS） | Next.js / Stripe | Spec ✅ |
@@ -39,7 +39,7 @@ ext:      .md / .txt
 ## 開發優先序
 
 ```
-1️⃣ CardSense     — Live（5 銀行 + /calc），當前：既有資料品質提升 + 泛用回饋卡入榜
+1️⃣ CardSense     — Live（5 銀行 + 首頁計算機），當前：既有資料品質提升 + 泛用回饋卡入榜
 2️⃣ RTA           — V1 → custom model + Agent SDK
 3️⃣ SEEDCRAFT     — LINE MVP 開發
 4️⃣ TechTrend     — 週刊生產 + 訂閱成長
@@ -64,8 +64,7 @@ SEEDCRAFT → RTA             補習班推薦 → 評論可信度
 
 ## 重點文件索引
 
-- [CardSense-Overview.md](./CardSense-Overview.md) — CardSense 跨 repo 架構、完成進度、Roadmap、快速開始
-- [CardSense-Demo-Spec.md](./CardSense-Demo-Spec.md) — `/calc` 年度損失社群入口頁規格
+- [CardSense-Status.md](./CardSense-Status.md) — CardSense 跨 repo 詳細狀態、完成進度、Roadmap、快速開始
 
 ## 與各專案 Code Repo 的關係
 
@@ -76,7 +75,7 @@ SEEDCRAFT → RTA             補習班推薦 → 評論可信度
 | [cardsense-contracts](https://github.com/WaddleStudio/cardsense-contracts) | 共用資料模型 | §4 | Schema 穩定 |
 | [cardsense-extractor](https://github.com/WaddleStudio/cardsense-extractor) | 銀行爬蟲 + 正規化 | §3 | 5 銀行完成 + Supabase sync |
 | [cardsense-api](https://github.com/WaddleStudio/cardsense-api) | 推薦 API | §4-5 | Supabase prod 部署 |
-| [cardsense-web](https://github.com/WaddleStudio/cardsense-web) | 前端展示 + /calc 社群入口 | Demo-Spec | Vercel Live |
+| [cardsense-web](https://github.com/WaddleStudio/cardsense-web) | 前端展示（首頁算卡計算機 + 卡片目錄） | spec-cardSense | Vercel Live |
 | [review-trust-analyzer](https://github.com/WaddleStudio/review-trust-analyzer) | 混合評分系統 | spec-rta | |
 | [seedcraft](https://github.com/WaddleStudio/seedcraft) | LINE Bot + LIFF | spec-seedcraft | |
 | [techtrend](https://github.com/WaddleStudio/techtrend) | B2B 技術週刊 | spec-techtrend | |
