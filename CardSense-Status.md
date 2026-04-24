@@ -45,14 +45,21 @@ CardSense 是一個以**情境式卡片比較**為核心的信用卡推薦平台
 
 ---
 
-## 現況快照（2026-04-21）
+## 現況快照（2026-04-24）
 
 | 子專案 | 狀態 | Latest |
 |--------|------|--------|
-| cardsense-contracts | ✅ 穩定 | `8c17abd` — TRAVEL 類別、taxonomy 整合 |
-| cardsense-extractor | ✅ 核心完成 | `672de27` — AIRLINE → TRANSPORT remap |
+| cardsense-contracts | ✅ 穩定 | `28bbaf6` — README 補充 benefit-plan schema 與 recommendation response 結構 |
+| cardsense-extractor | ✅ 核心完成 | `1e09b02` — README 補充 Supabase sync 與 `refresh_and_deploy` 新參數 |
 | cardsense-api | ✅ 已部署 | `608bba9` — DAY_OF_MONTH / DAY_OF_WEEK 日期過濾 |
-| cardsense-web | ✅ 已部署 | `4d4a0e6` — PR #3 計算機 layout + My Wallet carousel |
+| cardsense-web | ✅ 已部署 | `48dc3ce` — 首頁計算機商家捷徑前移與熱門商家 shortcut 調整 |
+
+### 最近進展（2026-04-24）
+
+- **Web / Roadmap #1**：已將 merchant-first 入口前移到實際首頁計算機 `/`，並同步補到 `/recommend`；加入熱門商家捷徑（全聯、家樂福、momo、蝦皮、Agoda、星巴克、Uber Eats）與預設場景映射。
+- **首次體驗**：使用者現在可以從「我去全聯刷哪張？」這類商家問題直接進站，不必先理解完整類別樹；切換類別 / 子類別時也不會再清空 merchantName。
+- **下一步**：用實際 API / SQLite 結果驗證熱門商家清單，收斂為「高辨識度 + 穩定可回傳 2 張以上卡片」的 shortlist。
+- **Pipeline verify 註記**：本輪為前端導向改動，依 `cardsense-pipeline-verify` workflow 暫不需執行 extractor / SQLite / API smoke test；下次若涉及商家映射、promotion import 或 benefit-plan 變更，需補跑完整驗證流程並記錄 pass/fail。
 
 **資料規模**：5 家銀行、100 張卡、813 筆優惠（628 RECOMMENDABLE）
 
@@ -94,6 +101,7 @@ CardSense 的核心傳播路徑：用戶算卡 → 覺得結果值得截圖 → 
 #### 1. 商家搜尋入口前置（Web）
 **問題**：merchantName 輸入目前藏在進階選項，用戶的第一個問題「我去全聯刷哪張？」沒有明顯入口。  
 **目標**：商家名稱成為首頁主要輸入路徑之一，直接觸發推薦。
+**進度（2026-04-24）**：已完成第一階段。首頁計算機 `/` 與 `/recommend` 均已加入 merchant-first 輸入區、熱門商家捷徑與預設場景；下一階段改為用實際推薦結果校準 shortcut 名單與排序。
 
 #### 2. 高頻商家覆蓋補強（Extractor + Contracts）
 **問題**：精準計算的前提是資料完整。若商家映射缺失，算出來的數字是殘缺答案。  
@@ -158,4 +166,4 @@ CardSense 的核心傳播路徑：用戶算卡 → 覺得結果值得截圖 → 
 - [fleet-command/specs/spec-cardSense.md](./specs/spec-cardSense.md) — 完整專案規格書
 - [fleet-command/docs/Supabase-Discord-Webhook-Setup.md](./docs/Supabase-Discord-Webhook-Setup.md) — Feedback Widget 串接說明
 
-*Last updated: 2026-04-21*
+*Last updated: 2026-04-24*
