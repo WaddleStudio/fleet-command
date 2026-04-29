@@ -9,6 +9,19 @@ Evidence screenshots:
 - `cardsense-prod-cards-mobile-after-coldstart.png`
 - `cardsense-prod-calc-route.png`
 
+## Post-Research Direction Addendum
+
+After the iCard.AI competitor review, the follow-up direction document became the product north star for planning:
+
+- [CardSense Product Direction vs iCard.AI](./CardSense-Product-Direction-vs-iCardAI.md)
+
+This review remains the source of record for product, UX, engineering, QA, and security findings from 2026-04-29. The product direction document does not invalidate those findings. It sharpens the priority order:
+
+1. Keep the 30-day wedge focused on `My Wallet + transaction decision + trust explanation`.
+2. Treat broad catalog, broad SEO, affiliate optimization, loans, insurance, and chatbot-first UX as deferred work.
+3. Interpret the review action plan through the product direction lens: fix broken decision flow paths first, then make recommendation logic explainable, cap-aware, eligibility-aware, and source-backed.
+4. Use this review for issue inventory; use the product direction document for scope decisions and future implementation planning.
+
 ## Executive Summary
 
 CardSense 最強定位不是「信用卡 listing site」，而是 **Taiwan credit card decision engine**：付款前輸入 merchant/channel/amount/payment method/My Wallet，直接回答「這筆該刷哪張、實拿多少、為什麼、哪些條件會翻車」。
