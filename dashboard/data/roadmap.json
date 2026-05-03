@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-05-03",
+  "source": "../CardSense-Status.md#306090-roadmap",
+  "horizons": [
+    {
+      "id": "0-30",
+      "name": "0-30 days",
+      "theme": "Prove The Decision Wedge",
+      "status": "active",
+      "progress": 90,
+      "items": [
+        {
+          "workstream": "Product",
+          "deliverable": "My Wallet + transaction input + one best card + 1-2 alternatives",
+          "status": "done"
+        },
+        {
+          "workstream": "UX",
+          "deliverable": "Homepage framed as checkout-time decision (「這筆消費該刷哪張卡」), mobile progressive disclosure for advanced settings",
+          "status": "done"
+        },
+        {
+          "workstream": "Engine",
+          "deliverable": "channel=ALL wildcard, invalid enum → 400, merchant alias registry, date-condition filtering, cold start UX",
+          "status": "done"
+        },
+        {
+          "workstream": "Trust",
+          "deliverable": "Result panel shows confidence, validUntil, matched promo count, source URL, no-result reason engine",
+          "status": "done"
+        },
+        {
+          "workstream": "Data",
+          "deliverable": "High-frequency merchant coverage: 全聯, momo, Shopee, Agoda, Uber Eats, LINE Pay, Apple Pay, Costco, insurance, overseas, Japan spend",
+          "status": "done"
+        },
+        {
+          "workstream": "QA",
+          "deliverable": "Regression cases for momo, Shopee, Agoda, Uber Eats, Apple Pay, Costco, insurance, and overseas spend",
+          "status": "done"
+        },
+        {
+          "workstream": "Security",
+          "deliverable": "Per-IP rate limiting + body size limit on public API; external secret rotation pending vendor console action",
+          "status": "watch"
+        }
+      ]
+    },
+    {
+      "id": "31-60",
+      "name": "31-60 days",
+      "theme": "Build Retention",
+      "status": "planned",
+      "progress": 12,
+      "items": [
+        {
+          "workstream": "Product",
+          "deliverable": "Manual cap usage, reward ledger, and bonus progress",
+          "status": "next"
+        },
+        {
+          "workstream": "Data",
+          "deliverable": "User correction loop for reward posted, did not post, or merchant categorized differently",
+          "status": "next"
+        },
+        {
+          "workstream": "UX",
+          "deliverable": "Promotion expiry alerts and best-card changed alerts",
+          "status": "next"
+        },
+        {
+          "workstream": "Engine",
+          "deliverable": "Confidence score based on source freshness, merchant certainty, and rule completeness",
+          "status": "next"
+        },
+        {
+          "workstream": "Growth",
+          "deliverable": "3-5 high-trust scenario pages plus methodology page",
+          "status": "next"
+        },
+        {
+          "workstream": "Ops",
+          "deliverable": "Production runbook, rollback drill, and scheduled sync monitoring for promotion publishing",
+          "status": "next"
+        }
+      ]
+    },
+    {
+      "id": "61-90",
+      "name": "61-90 days",
+      "theme": "Create Defensibility",
+      "status": "planned",
+      "progress": 0,
+      "items": [
+        {
+          "workstream": "Product",
+          "deliverable": "Personal card strategy dashboard for caps, annual fee thresholds, and first-spend tasks",
+          "status": "next"
+        },
+        {
+          "workstream": "Data",
+          "deliverable": "Source snapshots, promotion change history, and versioned audit trail",
+          "status": "next"
+        },
+        {
+          "workstream": "Engine",
+          "deliverable": "Scenario simulation for amount changes, cap used, not new customer, and wrong payment method",
+          "status": "next"
+        },
+        {
+          "workstream": "Trust",
+          "deliverable": "Public methodology page and affiliate policy",
+          "status": "next"
+        },
+        {
+          "workstream": "Growth",
+          "deliverable": "CardSense Verified pages for top 100 merchants/scenarios",
+          "status": "next"
+        }
+      ]
+    }
+  ]
+}
