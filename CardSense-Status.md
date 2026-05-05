@@ -6,7 +6,7 @@ CardSense is the Taiwan credit-card payment decision engine for answering one ch
 
 > **Live**: https://cardsense-web.vercel.app
 > **Dashboard**: [fleet-command/dashboard](./dashboard/index.html)
-> **Last updated**: 2026-05-03
+> **Last updated**: 2026-05-05
 > **Direction docs**: [2026-04-29 Review](./reviews/2026-04-29-cardsense-review/CardSense-Review-2026-04-29.md) + [Product Direction vs iCard.AI](./reviews/2026-04-29-cardsense-review/CardSense-Product-Direction-vs-iCardAI.md)
 
 ---
@@ -29,10 +29,10 @@ The request path stays deterministic. LLMs may help parsing, drafting explanatio
 |------|---------------|
 | Product | Merchant-first calculator (「這筆消費該刷哪張卡」), My Wallet, benefit plan switching, recommendation result, and share flow. |
 | Frontend | React/Vite app live on Vercel. Mobile progressive disclosure: exchange rate and plan switching behind 進階設定. Cold start banner with 60s retry messaging. |
-| API | Spring Boot deterministic `DecisionEngine`: channel=ALL wildcard, invalid enum → 400, per-IP rate limiting, body size limit. |
-| Data | E.SUN, CATHAY, TAISHIN, FUBON, CTBC. High-frequency merchants: 全聯, momo, Shopee, Agoda, Uber Eats, LINE Pay, Apple Pay, Costco, insurance, overseas, Japan spend. |
+| API | Spring Boot deterministic `DecisionEngine`: channel=ALL wildcard, invalid enum → 400, per-IP rate limiting, body size limit. `excludedConditions` honors PAYMENT/VENUE; canonical payment alias expansion (e.g. "LINE Pay" → `LINE_PAY`); merchant-input no longer leaks into payment matching. |
+| Data | E.SUN, CATHAY, TAISHIN, FUBON, CTBC. High-frequency merchants: 全聯, momo, Shopee, Agoda, Uber Eats, LINE Pay, Apple Pay, Costco, insurance, overseas, Japan spend. Payment-classification rules encoded for Unicard 百大 (third-party-payment reclassify), Richart 天天刷 (`TAISHIN_PAY` gate at 7-11/全家), 富邦 momo (third-party-payment downgrade), 富邦數位生活卡 (channel-rail physical-category exclusion). |
 | Trust | Result panel shows confidence, validUntil, matched promo count, source URL, and no-result reason. Atomic promotion publishing. |
-| QA | Regression suite covers momo, Shopee, Agoda, Uber Eats, Apple Pay, Costco, insurance, and overseas spend (35 passing). |
+| QA | Regression suite covers momo, Shopee, Agoda, Uber Eats, Apple Pay, Costco, insurance, overseas, and the 4 payment-classification patterns (api 92 passing, extractor 170 passing). |
 
 The dashboard shows repo health, roadmap progress, open action queue, latest checks, and release evidence links.
 
