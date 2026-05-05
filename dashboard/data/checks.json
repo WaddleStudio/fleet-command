@@ -1,11 +1,17 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-05-03",
+  "updatedAt": "2026-05-05",
   "summary": {
     "status": "watch",
     "headline": "Open work: security, data, QA, ops.",
-    "lastProductionSmoke": "2026-05-03",
-    "evidencePath": "../reviews/2026-05-03-post-merge-chrome/"
+    "lastProductionSmoke": "2026-05-05",
+    "evidencePath": "../reviews/2026-05-03-post-merge-chrome/",
+    "lastEngineSmoke": {
+      "date": "2026-05-05",
+      "scope": "payment-classification: PX Mart + LINE Pay + ESUN_UNICARD",
+      "result": "pass",
+      "note": "Render production returned recommendationCount=1 with contributing promotion 玉山Unicard 百大指定消費 行動支付（UP選）."
+    }
   },
   "healthChecks": [
     {

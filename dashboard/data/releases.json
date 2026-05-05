@@ -1,7 +1,42 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-05-03",
+  "updatedAt": "2026-05-05",
   "releases": [
+    {
+      "id": "2026-05-05-payment-classification",
+      "date": "2026-05-05",
+      "title": "Payment classification rules (Patterns A–D)",
+      "summary": "Fix the long-standing bug where payment methods (LINE Pay, 街口, etc.) were treated as merchants in reward matching. Encodes Unicard 百大 third-party-payment reclassify, Richart 天天刷 TAISHIN_PAY gate at 7-11/全家, 富邦 momo third-party-payment downgrade, and 富邦數位生活卡 channel-rail physical-category exclusion. Engine now honors excludedConditions for PAYMENT/VENUE and removes the merchant→payment bridge.",
+      "evidence": "../docs/superpowers/plans/2026-05-04-payment-classification.md",
+      "prs": [
+        {
+          "repo": "cardsense-contracts",
+          "number": 3,
+          "url": "https://github.com/WaddleStudio/cardsense-contracts/pull/3"
+        },
+        {
+          "repo": "cardsense-extractor",
+          "number": 4,
+          "url": "https://github.com/WaddleStudio/cardsense-extractor/pull/4"
+        },
+        {
+          "repo": "cardsense-api",
+          "number": 4,
+          "url": "https://github.com/WaddleStudio/cardsense-api/pull/4"
+        },
+        {
+          "repo": "cardsense-api",
+          "number": 5,
+          "url": "https://github.com/WaddleStudio/cardsense-api/pull/5"
+        }
+      ],
+      "verification": [
+        "cardsense-api: mvn test pass (92 tests)",
+        "cardsense-extractor: pytest pass (170 tests)",
+        "cardsense-contracts: MOBILE_PAY merchant duplicates removed (199 codes; api copy synced via api PR #5)",
+        "render production smoke: PX Mart + LINE Pay + ESUN_UNICARD → recommendationCount=1, contributing promotion is 玉山Unicard 百大指定消費 行動支付（UP選）"
+      ]
+    },
     {
       "id": "2026-04-30-p0-p1-repair",
       "date": "2026-04-30",
