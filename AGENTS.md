@@ -191,3 +191,9 @@ Tool defaults:
 
 - Python commands use `uv run python`.
 - Browser checks use installed Google Chrome through gstack/browser. If Chrome/gstack is unavailable, report the fallback explicitly.
+
+## Development CLI Checks
+
+During development, use `fleet-command/skills/cardsense-dev-checks/SKILL.md` for frequent CLI/API verification: targeted repo tests, local/prod API smoke with `curl`, Chrome/gstack browser smoke, GitHub PR/CI inspection with `gh`, and Vercel read-only inspection when available.
+
+Use `cardsense-dev-checks` while building or debugging. Use `cardsense-workspace-completion` before ending the task.
