@@ -14,6 +14,16 @@
       "id": "python-package-management",
       "title": "Python package management",
       "rule": "Use uv for Python dependency management and Python command execution across the workspace."
+    },
+    {
+      "id": "browser-verification",
+      "title": "Browser verification",
+      "rule": "Use installed Google Chrome via gstack/browser for browser smoke tests; only fall back to another browser when Chrome is unavailable and report the fallback."
+    },
+    {
+      "id": "git-pr-closeout",
+      "title": "Git and PR closeout",
+      "rule": "Do implementation work on a task branch, verify before commit, commit by repo, push the branch, and create or update the PR when remote access is available."
     }
   ],
   "branchTypes": [
@@ -38,6 +48,9 @@
     "sourceDoc": "fleet-command/AGENTS.md",
     "summary": [
       "Run verification first.",
+      "Run cardsense-workspace-completion before ending every CardSense workspace task; use fleet-dashboard-closeout for dashboard-specific details.",
+      "Use uv for Python commands and Chrome via gstack/browser for browser checks.",
+      "Confirm the task branch, commit verified changes, push, and create or update the PR when remote access is available.",
       "Update fleet-command when workflow, architecture, or workspace rules changed.",
       "Re-render workspace assets when the manifest or generated context changed.",
       "Organize branches by repo + branch type + shared slug.",

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-05-03",
+  "updatedAt": "2026-05-06",
   "source": "../CardSense-Status.md#306090-roadmap",
   "horizons": [
     {
@@ -22,7 +22,7 @@
         },
         {
           "workstream": "Engine",
-          "deliverable": "channel=ALL wildcard, invalid enum → 400, merchant alias registry, date-condition filtering, cold start UX",
+          "deliverable": "Merchant/payment eligibility, alias registry, date-condition filtering, and cold start UX",
           "status": "done"
         },
         {
@@ -43,7 +43,7 @@
         {
           "workstream": "Security",
           "deliverable": "Per-IP rate limiting + body size limit on public API; external secret rotation pending vendor console action",
-          "status": "watch"
+          "status": "blocked"
         }
       ]
     },

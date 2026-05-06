@@ -106,6 +106,7 @@ Use the `cardsense-pipeline-verify` skill to run end-to-end validation:
 2. Import to SQLite
 3. Start API and verify new fields appear in responses
 4. Verify frontend renders correctly
+5. Finish with `cardsense-workspace-completion`; use `fleet-dashboard-closeout` for dashboard-specific details so health, roadmap, release evidence, and generated workspace context reflect the contract change
 
 ## Backward compatibility checklist
 

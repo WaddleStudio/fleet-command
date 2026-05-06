@@ -163,3 +163,31 @@ Branch 命名格式：
 ---
 
 *本文件由主人維護，agent 不可自行修改。*
+## CardSense Workspace Completion
+
+Before ending any CardSense workspace task, run the global `cardsense-workspace-completion` skill. If that global skill is unavailable, use the local dashboard rules in `fleet-command/skills/fleet-dashboard-closeout/SKILL.md`.
+
+This is part of the default completion flow, not an optional follow-up. Use it to decide verification, dashboard/status updates, tool choices, branch hygiene, commit, push, and PR status.
+
+Minimum closeout:
+
+1. Inspect the task result and diff.
+2. Classify the dashboard impact as `no_dashboard_change`, `status_update`, `release_evidence`, `open_queue_update`, or `workspace_rule_update`.
+3. Update the smallest necessary set of files: `CardSense-Status.md`, `dashboard/data/*.json`, `agent-log/YYYY-MM-DD.md`, `workspace/workspace.manifest.json`, or generated contexts.
+4. Run `uv run python -m unittest tests.test_dashboard_data`.
+5. If dashboard files changed, serve `fleet-command/dashboard` over HTTP with `uv run python -m http.server 5177` and smoke it with Chrome via gstack/browser.
+6. Confirm the task branch before committing. Do not finish implementation work on `main` or `master` unless the user explicitly asked for that.
+7. Commit verified changes by repo, push the task branch, and create or update the PR when remote access is available.
+8. Report the classification, files changed, verification result, branch, commit, push, PR status, and any remaining drift.
+
+Keep the dashboard focused:
+
+- Current repo health and open work belong in `dashboard/data/checks.json`.
+- Completed repair or release evidence belongs in `dashboard/data/releases.json`.
+- Roadmap state belongs in `dashboard/data/roadmap.json`.
+- Project stage, focus, commands, and links belong in `dashboard/data/projects.json`.
+
+Tool defaults:
+
+- Python commands use `uv run python`.
+- Browser checks use installed Google Chrome through gstack/browser. If Chrome/gstack is unavailable, report the fallback explicitly.
