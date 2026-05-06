@@ -159,3 +159,4 @@ After successful verification:
 1. Record the verification result (pass/fail + notes) for the PR or agent log
 2. If Supabase sync was done, verify production API returns updated data
 3. If frontend was affected, check the deployed Vercel preview
+4. Run `cardsense-workspace-completion` before ending the task; use `fleet-dashboard-closeout` for dashboard-specific details so `CardSense-Status.md`, `dashboard/data/*.json`, release evidence, and workspace generated assets stay current without a separate reminder
