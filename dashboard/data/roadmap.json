@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-05-06",
+  "updatedAt": "2026-05-08",
   "source": "../CardSense-Status.md#306090-roadmap",
   "horizons": [
     {
@@ -8,7 +8,7 @@
       "name": "0-30 days",
       "theme": "Prove The Decision Wedge",
       "status": "active",
-      "progress": 90,
+      "progress": 95,
       "items": [
         {
           "workstream": "Product",
@@ -42,7 +42,7 @@
         },
         {
           "workstream": "Security",
-          "deliverable": "Per-IP rate limiting + body size limit on public API; external secret rotation pending vendor console action",
+          "deliverable": "Per-IP rate limiting + body size limit on public API; Gitleaks secret scanning; external secret rotation pending vendor console action",
           "status": "blocked"
         }
       ]

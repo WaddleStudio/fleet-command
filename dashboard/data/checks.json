@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-05-05",
+  "updatedAt": "2026-05-08",
   "summary": {
     "status": "watch",
-    "headline": "Open work: security, data, QA, ops.",
+    "headline": "Open work: vendor secret rotation, data, QA, ops.",
     "lastProductionSmoke": "2026-05-05",
     "evidencePath": "../reviews/2026-05-03-post-merge-chrome/",
     "lastEngineSmoke": {
@@ -51,8 +51,8 @@
       "priority": "P0",
       "title": "Add secret scanning guardrail",
       "owner": "Security/Ops",
-      "status": "next",
-      "nextStep": "Choose Gitleaks or secretlint and wire it into local/CI verification.",
+      "status": "done",
+      "nextStep": "Gitleaks configs and GitHub Actions workflows are now present across CardSense repos; monitor CI on the next PR.",
       "source": "../CardSense-Status.md#open-follow-ups"
     },
     {

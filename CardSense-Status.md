@@ -6,7 +6,7 @@ CardSense is the Taiwan credit-card payment decision engine for answering one ch
 
 > **Live**: https://cardsense-web.vercel.app
 > **Dashboard**: [fleet-command/dashboard](./dashboard/index.html)
-> **Last updated**: 2026-05-05
+> **Last updated**: 2026-05-08
 > **Direction docs**: [2026-04-29 Review](./reviews/2026-04-29-cardsense-review/CardSense-Review-2026-04-29.md) + [Product Direction vs iCard.AI](./reviews/2026-04-29-cardsense-review/CardSense-Product-Direction-vs-iCardAI.md)
 
 ---
@@ -61,7 +61,7 @@ The dashboard shows repo health, roadmap progress, open action queue, latest che
 | UX | Promotion expiry alerts and best-card-changed alerts. |
 | Engine | Confidence scoring based on source freshness, merchant certainty, and rule completeness. |
 | Growth | 3-5 high-trust scenario pages plus methodology page. |
-| Ops | Production runbook, rollback drill, and scheduled sync monitoring. |
+| Ops | Production runbook, rollback drill, scheduled sync monitoring, and secret-scanning CI guardrails. |
 
 ### 61-90 Days: Create Defensibility
 
@@ -80,7 +80,7 @@ The dashboard shows repo health, roadmap progress, open action queue, latest che
 | Item | Why it matters | Suggested timing |
 |------|----------------|------------------|
 | Supabase / Cloudflare secret rotation | Vendor-console credentials still need real rotation. | Security — do now |
-| Secret scanning | Prevent secrets from entering repos. | Security — do now |
+| Secret scanning | Gitleaks config + GitHub Actions workflow added across CardSense repos. | Done 2026-05-08 |
 | `recommendation_audits` | Money decisions need request/response, promo versions, engine version, latency, and errors. | 60-90 days |
 | `promoId` logical key hardening | Same-title same-day promotions can collide. | 31-60 days |
 | Feedback widget upload security | Direct anon upload/insert too exposed for production. | 31-60 days |
@@ -94,4 +94,5 @@ The dashboard shows repo health, roadmap progress, open action queue, latest che
 - [2026-04-29 CardSense review](./reviews/2026-04-29-cardsense-review/CardSense-Review-2026-04-29.md)
 - [Product direction vs iCard.AI](./reviews/2026-04-29-cardsense-review/CardSense-Product-Direction-vs-iCardAI.md)
 - [Bank promo review workflow](./CardSense-Bank-Promo-Review-Workflow.md)
+- [Secret scanning guardrail](./docs/CardSense-Secret-Scanning.md)
 - [Full CardSense spec](./specs/spec-cardSense.md)
