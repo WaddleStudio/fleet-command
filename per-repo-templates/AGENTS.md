@@ -44,3 +44,10 @@
 ---
 
 *全域規則以 fleet-command/AGENTS.md 為準。本檔案僅補充 repo 專屬規則。*
+
+## CardSense Browser Checks
+
+- On Windows/Codex, use installed Google Chrome directly for CardSense browser verification.
+- Do not try bundled `gstack/browse/dist/browse` first for page checks.
+- Use Chrome headless for screenshots, DOM/text inspection, console/runtime checks, and route comparisons.
+- If Chrome itself is unavailable, report the fallback explicitly.

@@ -190,7 +190,7 @@ Keep the dashboard focused:
 Tool defaults:
 
 - Python commands use `uv run python`.
-- Browser checks use installed Google Chrome through gstack/browser. If Chrome/gstack is unavailable, report the fallback explicitly.
+- Browser checks use installed Google Chrome directly on Windows/Codex. Do not try bundled `gstack/browse/dist/browse` first for CardSense page checks; use Chrome headless for screenshots, DOM/text inspection, console/runtime checks, and route comparisons. If Chrome itself is unavailable, report the fallback explicitly.
 
 ## Development CLI Checks
 
