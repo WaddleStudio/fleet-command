@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-05-03",
+  "updatedAt": "2026-05-09",
   "workspace": {
     "name": "cardsense-workspace",
     "sourceOfTruth": "../CardSense-Status.md",
@@ -12,10 +12,10 @@
       "name": "CardSense Web",
       "repo": "WaddleStudio/cardsense-web",
       "path": "../cardsense-web",
-      "role": "Frontend recommendation UX and calculator surface",
+      "role": "Frontend checkout decision UX and wallet comparison surface",
       "stage": "Live",
       "health": "healthy",
-      "focus": "Merchant-first calculator, My Wallet, trust result panel, mobile progressive disclosure",
+      "focus": "Merchant-first Checkout Mode, My Wallet, trust result panel, mobile progressive disclosure",
       "stack": ["React 19", "TypeScript 5.9", "Vite 8", "Tailwind CSS 4", "shadcn/ui"],
       "commands": ["npm run build", "npm run test:unit"],
       "links": {
