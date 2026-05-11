@@ -1,0 +1,13 @@
+title = "Fleet Command secret scanning"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Documented placeholder secrets in specs and runbooks"
+regexes = [
+  '''<[^>\n]*(?:key|token|secret|password)[^>\n]*>''',
+  '''your[-_ ]?(?:api[-_ ]?)?(?:key|token|secret|password)''',
+  '''your-project\.supabase\.co''',
+  '''your-anon-key''',
+]

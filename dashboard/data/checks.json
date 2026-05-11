@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-05-05",
+  "updatedAt": "2026-05-11",
   "summary": {
     "status": "watch",
-    "headline": "Open work: security, data, QA, ops.",
+    "headline": "Open work: data trust, ops hardening, and pinned dependency hygiene.",
     "lastProductionSmoke": "2026-05-05",
     "evidencePath": "../reviews/2026-05-03-post-merge-chrome/",
     "lastEngineSmoke": {
@@ -40,10 +40,10 @@
     {
       "id": "secret-rotation",
       "priority": "P0",
-      "title": "Rotate Supabase and Cloudflare secrets in vendor consoles",
+      "title": "Finish Supabase / Cloudflare secret rotation follow-through",
       "owner": "Security/Ops",
-      "status": "blocked",
-      "nextStep": "Rotate external credentials, update deployment secrets, then record completion in the runbook.",
+      "status": "done",
+      "nextStep": "Supabase DB password was reset, Render was updated, production API health is UP, and Cloudflare token usage is local-only with the local token no longer valid.",
       "source": "../CardSense-Status.md#open-follow-ups"
     },
     {
@@ -51,8 +51,8 @@
       "priority": "P0",
       "title": "Add secret scanning guardrail",
       "owner": "Security/Ops",
-      "status": "next",
-      "nextStep": "Choose Gitleaks or secretlint and wire it into local/CI verification.",
+      "status": "done",
+      "nextStep": "Gitleaks is wired into CardSense repo CI; fleet-command now has .gitleaks.toml and a Secret Scan workflow. Local fleet-command scan passed with no leaks.",
       "source": "../CardSense-Status.md#open-follow-ups"
     },
     {
@@ -60,17 +60,8 @@
       "priority": "P1",
       "title": "Design persistent recommendation audit trail",
       "owner": "Data/Trust",
-      "status": "next",
-      "nextStep": "Capture request, response, evaluated promo versions, engine version, latency, and error fields.",
-      "source": "../CardSense-Status.md#open-follow-ups"
-    },
-    {
-      "id": "feedback-upload-security",
-      "priority": "P1",
-      "title": "Move feedback widget uploads behind backend protection",
-      "owner": "Security/Product",
-      "status": "next",
-      "nextStep": "Replace direct anon upload/insert with backend or Edge Function, CAPTCHA, MIME/size validation, and RLS.",
+      "status": "in_progress",
+      "nextStep": "API branch adds persistent recommendation_audits writes for request/response JSON, promo version IDs, engine version, latency, and errors; next apply Supabase SQL, deploy, and production smoke.",
       "source": "../CardSense-Status.md#open-follow-ups"
     },
     {
@@ -80,6 +71,15 @@
       "owner": "DX/Ops",
       "status": "next",
       "nextStep": "Replace mutable branch clone with pinned commit, tag, or package reference.",
+      "source": "../CardSense-Status.md#open-follow-ups"
+    },
+    {
+      "id": "feedback-upload-security",
+      "priority": "P2",
+      "title": "Move feedback widget uploads behind backend protection",
+      "owner": "Security/Product",
+      "status": "queued",
+      "nextStep": "Keep behind core security and auditability work; later replace direct anon upload/insert with backend or Edge Function, CAPTCHA, MIME/size validation, and RLS.",
       "source": "../CardSense-Status.md#open-follow-ups"
     }
   ]

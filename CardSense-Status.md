@@ -6,7 +6,7 @@ CardSense is the Taiwan credit-card payment decision engine for answering one ch
 
 > **Live**: https://cardsense-web.vercel.app
 > **Dashboard**: [fleet-command/dashboard](./dashboard/index.html)
-> **Last updated**: 2026-05-05
+> **Last updated**: 2026-05-11
 > **Direction docs**: [2026-04-29 Review](./reviews/2026-04-29-cardsense-review/CardSense-Review-2026-04-29.md) + [Product Direction vs iCard.AI](./reviews/2026-04-29-cardsense-review/CardSense-Product-Direction-vs-iCardAI.md)
 
 ---
@@ -79,12 +79,14 @@ The dashboard shows repo health, roadmap progress, open action queue, latest che
 
 | Item | Why it matters | Suggested timing |
 |------|----------------|------------------|
-| Supabase / Cloudflare secret rotation | Vendor-console credentials still need real rotation. | Security — do now |
-| Secret scanning | Prevent secrets from entering repos. | Security — do now |
+| Supabase / Cloudflare secret rotation | Supabase DB password was reset, Render was updated, and production API health is UP; Cloudflare token is local-only and the local token is no longer valid. | Done - monitor |
+| Secret scanning | Gitleaks guardrail is wired for CardSense repos; fleet-command now has local config and CI workflow. | Done - monitor |
 | `recommendation_audits` | Money decisions need request/response, promo versions, engine version, latency, and errors. | 60-90 days |
 | `promoId` logical key hardening | Same-title same-day promotions can collide. | 31-60 days |
 | Feedback widget upload security | Direct anon upload/insert too exposed for production. | 31-60 days |
 | Pinned contracts dependency | Vercel builds should not clone mutable contracts branches. | 31-60 days |
+
+2026-05-11 note: Supabase DB password rotation and Render environment update were completed. Production API health returned `{"supabase":"UP","repository":"supabase","status":"UP"}`. Cloudflare extractor token usage is local-only; the local token verification returned 401, so there is no active production Cloudflare token to rotate. Secret scanning now uses Gitleaks across CardSense repos; fleet-command was scanned locally with Gitleaks 8.30.1 and no leaks were found. Recommendation audit implementation is in progress on the API branch: persistent `recommendation_audits` writes and SQL are implemented, with Supabase SQL application, deploy, and production smoke still remaining. Feedback widget upload security is queued behind core security and auditability work because it is not part of the recommendation path.
 
 ---
 
