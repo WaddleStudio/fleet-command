@@ -13,8 +13,7 @@
 
 - `README.md`
 - `AGENTS.md`
-- `CardSense-Overview.md`
-- `CardSense-Status.md`
+- `projects/cardsense/status.md`
 
 ## Verification
 

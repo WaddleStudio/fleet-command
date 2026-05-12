@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "generatedAt": "2026-05-12",
+  "skills": [
+    {
+      "id": "superpowers",
+      "cloneUrl": "https://github.com/obra/superpowers.git",
+      "target": ".claude/skills/superpowers",
+      "host": "claude",
+      "role": "engineering_workflow",
+      "ref": { "sha": "dd7a63ac45233dce0a6c6222a77f205ee7c78750", "tag": "v5.0.7", "resolvedAt": "2026-05-12" }
+    },
+    {
+      "id": "gstack",
+      "cloneUrl": "https://github.com/garrytan/gstack.git",
+      "target": ".claude/skills/gstack",
+      "host": "claude",
+      "role": "planning_review_browser_qa",
+      "ref": { "sha": "dc6252d1df7f1f650ea6e9b2bba7d08fab5de902", "tag": null, "resolvedAt": "2026-05-12" },
+      "postClone": [{ "cmd": "./setup", "cwd": ".claude/skills/gstack" }]
+    },
+    {
+      "id": "ui-ux-pro-max",
+      "cloneUrl": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill.git",
+      "target": ".claude/skills/ui-ux-pro-max",
+      "host": "claude",
+      "role": "product_design",
+      "ref": { "sha": "07f4ef3ac2568c25a3b0c8ef5165a86abc3e56e4", "tag": "v2.5.0", "resolvedAt": "2026-05-12" }
+    }
+  ]
+}

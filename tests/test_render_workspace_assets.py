@@ -119,6 +119,74 @@ class RenderWorkspaceAssetsTest(unittest.TestCase):
             self.assertFalse((workspace / ".rgignore").exists())
             self.assertFalse((workspace / "cardsense-api" / "WORKSPACE_CONTEXT.generated.md").exists())
 
+    def _write_manifest_v2(self, workspace: Path) -> Path:
+        fleet_command = workspace / "fleet-command"
+        manifest_dir = fleet_command / "workspace"
+        manifest_dir.mkdir(parents=True)
+        (workspace / "cardsense-api").mkdir()
+
+        manifest = {
+            "version": 2,
+            "workspace": {"name": "cardsense-workspace", "rootRgignorePath": ".rgignore"},
+            "policies": [],
+            "branchTypes": [{"id": "feat", "description": "x"}],
+            "completionFlow": {"sourceDoc": "fleet-command/AGENTS.md", "summary": []},
+            "ignore": {"patterns": ["**/.git/"]},
+            "repos": [
+                {
+                    "name": "cardsense-api",
+                    "path": "cardsense-api",
+                    "cloneUrl": "https://github.com/WaddleStudio/cardsense-api.git",
+                    "ref": "main",
+                    "purpose": "Recommendation API",
+                    "role": "runtime",
+                    "generatedContextPath": "WORKSPACE_CONTEXT.generated.md",
+                    "keyFiles": ["README.md"],
+                    "commands": {"verify": ["mvn test"]},
+                },
+            ],
+            "agents": {
+                "claude": {
+                    "target": ".claude",
+                    "templateSource": "fleet-command/claude-config",
+                    "skillsTarget": ".claude/skills",
+                    "files": ["settings.json", "CLAUDE.md"],
+                },
+            },
+            "osDeps": {
+                "windows": {
+                    "manager": "winget",
+                    "packages": [{"id": "Git.Git", "verifyCmd": "git --version"}],
+                },
+            },
+        }
+        manifest_path = manifest_dir / "workspace.manifest.json"
+        manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+        return manifest_path
+
+    def test_v2_manifest_renders_repo_context_with_clone_url(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            workspace = Path(tmp)
+            manifest_path = self._write_manifest_v2(workspace)
+
+            render_workspace_assets(manifest_path)
+
+            api_context = (workspace / "cardsense-api" / "WORKSPACE_CONTEXT.generated.md").read_text(encoding="utf-8")
+            self.assertIn("Recommendation API", api_context)
+            self.assertIn("mvn test", api_context)
+
+    def test_v2_manifest_rejects_repo_without_clone_url(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            workspace = Path(tmp)
+            manifest_path = self._write_manifest_v2(workspace)
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            del manifest["repos"][0]["cloneUrl"]
+            manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+
+            with self.assertRaises(ValueError) as ctx:
+                render_workspace_assets(manifest_path)
+            self.assertIn("cloneUrl", str(ctx.exception))
+
 
 if __name__ == "__main__":
     unittest.main()
