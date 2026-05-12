@@ -113,9 +113,25 @@ def _write_or_check(target_path: Path, expected: str, check: bool) -> bool:
     return True
 
 
+def _validate_manifest(manifest: dict[str, Any]) -> None:
+    version = manifest.get("version", 1)
+    if version < 2:
+        return
+    for repo in manifest.get("repos", []):
+        if "cloneUrl" not in repo:
+            raise ValueError(
+                f"v2 manifest repo '{repo.get('name', '<unnamed>')}' is missing required field 'cloneUrl'"
+            )
+        if "ref" not in repo:
+            raise ValueError(
+                f"v2 manifest repo '{repo.get('name', '<unnamed>')}' is missing required field 'ref'"
+            )
+
+
 def render_workspace_assets(manifest_path: Path, check: bool = False) -> bool:
     manifest_path = manifest_path.resolve()
     manifest = load_manifest(manifest_path)
+    _validate_manifest(manifest)
     workspace_root = manifest_path.parents[2]
     is_clean = True
 

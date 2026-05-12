@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "workspace": {
     "name": "cardsense-workspace",
     "sourceOfTruthRepo": "fleet-command",
@@ -10,44 +10,16 @@
     ]
   },
   "policies": [
-    {
-      "id": "python-package-management",
-      "title": "Python package management",
-      "rule": "Use uv for Python dependency management and Python command execution across the workspace."
-    },
-    {
-      "id": "browser-verification",
-      "title": "Browser verification",
-      "rule": "Use installed Google Chrome via gstack/browser for browser smoke tests; only fall back to another browser when Chrome is unavailable and report the fallback."
-    },
-    {
-      "id": "git-pr-closeout",
-      "title": "Git and PR closeout",
-      "rule": "Do implementation work on a task branch, verify before commit, commit by repo, push the branch, and create or update the PR when remote access is available."
-    },
-    {
-      "id": "development-cli-checks",
-      "title": "Development CLI checks",
-      "rule": "Use cardsense-dev-checks during development for targeted tests, curl API smoke checks, Chrome/gstack browser checks, gh PR/CI inspection, and read-only deployment inspection."
-    }
+    { "id": "python-package-management", "title": "Python package management", "rule": "Use uv for Python dependency management and Python command execution across the workspace." },
+    { "id": "browser-verification", "title": "Browser verification", "rule": "Use installed Google Chrome via gstack/browser for browser smoke tests; only fall back to another browser when Chrome is unavailable and report the fallback." },
+    { "id": "git-pr-closeout", "title": "Git and PR closeout", "rule": "Do implementation work on a task branch, verify before commit, commit by repo, push the branch, and create or update the PR when remote access is available." },
+    { "id": "development-cli-checks", "title": "Development CLI checks", "rule": "Use cardsense-dev-checks during development for targeted tests, curl API smoke checks, Chrome/gstack browser checks, gh PR/CI inspection, and read-only deployment inspection." }
   ],
   "branchTypes": [
-    {
-      "id": "feat",
-      "description": "New feature or user-visible capability increase."
-    },
-    {
-      "id": "fix",
-      "description": "Bug fix or regression repair."
-    },
-    {
-      "id": "chore",
-      "description": "Docs, config, generated files, workflow, maintenance, or non-behavior refactor."
-    },
-    {
-      "id": "wip",
-      "description": "Exploratory or intentionally incomplete work that should stay isolated."
-    }
+    { "id": "feat", "description": "New feature or user-visible capability increase." },
+    { "id": "fix", "description": "Bug fix or regression repair." },
+    { "id": "chore", "description": "Docs, config, generated files, workflow, maintenance, or non-behavior refactor." },
+    { "id": "wip", "description": "Exploratory or intentionally incomplete work that should stay isolated." }
   ],
   "completionFlow": {
     "sourceDoc": "fleet-command/AGENTS.md",
@@ -82,15 +54,12 @@
     {
       "name": "fleet-command",
       "path": "fleet-command",
+      "cloneUrl": "https://github.com/WaddleStudio/fleet-command.git",
+      "ref": "main",
       "purpose": "Workspace control plane, specs, agent rules, and shared skills",
       "role": "control-plane",
       "generatedContextPath": "WORKSPACE_CONTEXT.generated.md",
-      "keyFiles": [
-        "README.md",
-        "AGENTS.md",
-        "CardSense-Overview.md",
-        "CardSense-Status.md"
-      ],
+      "keyFiles": ["README.md", "AGENTS.md", "projects/cardsense/status.md"],
       "commands": {
         "verify": [
           "uv run python scripts/render_workspace_assets.py --check",
@@ -102,75 +71,86 @@
     {
       "name": "cardsense-contracts",
       "path": "cardsense-contracts",
+      "cloneUrl": "https://github.com/WaddleStudio/cardsense-contracts.git",
+      "ref": "main",
       "purpose": "Shared contracts, schemas, and taxonomies for CardSense repos",
       "role": "contracts",
       "generatedContextPath": "WORKSPACE_CONTEXT.generated.md",
-      "keyFiles": [
-        "README.md",
-        "VIBE_SPEC.md",
-        "promotion/promotion-normalized.schema.json",
-        "recommendation/recommendation-request.schema.json",
-        "recommendation/recommendation-response.schema.json"
-      ],
-      "commands": {
-        "verify": [
-          "rg -n \"TRAVEL\" promotion recommendation taxonomy"
-        ]
-      }
+      "keyFiles": ["README.md", "VIBE_SPEC.md", "promotion/promotion-normalized.schema.json", "recommendation/recommendation-request.schema.json", "recommendation/recommendation-response.schema.json"],
+      "commands": { "verify": ["rg -n \"TRAVEL\" promotion recommendation taxonomy"] }
     },
     {
       "name": "cardsense-extractor",
       "path": "cardsense-extractor",
+      "cloneUrl": "https://github.com/WaddleStudio/cardsense-extractor.git",
+      "ref": "main",
       "purpose": "Promotion extraction, normalization, import, and sync pipeline",
       "role": "data-pipeline",
       "generatedContextPath": "WORKSPACE_CONTEXT.generated.md",
-      "keyFiles": [
-        "README.md",
-        "VIBE_SPEC.md",
-        "skills/cardsense-bank-promo-review/SKILL.md",
-        "extractor/promotion_rules.py",
-        "jobs/refresh_and_deploy.py"
-      ],
-      "commands": {
-        "verify": [
-          "uv run pytest",
-          "uv run python jobs/refresh_and_deploy.py --help"
-        ]
-      }
+      "keyFiles": ["README.md", "VIBE_SPEC.md", "skills/cardsense-bank-promo-review/SKILL.md", "extractor/promotion_rules.py", "jobs/refresh_and_deploy.py"],
+      "commands": { "verify": ["uv run pytest", "uv run python jobs/refresh_and_deploy.py --help"] }
     },
     {
       "name": "cardsense-api",
       "path": "cardsense-api",
+      "cloneUrl": "https://github.com/WaddleStudio/cardsense-api.git",
+      "ref": "main",
       "purpose": "Deterministic recommendation API runtime and repository adapters",
       "role": "runtime",
       "generatedContextPath": "WORKSPACE_CONTEXT.generated.md",
-      "keyFiles": [
-        "README.md",
-        "VIBE_SPEC.md",
-        "src/main/java/com/cardsense/api/service/DecisionEngine.java"
-      ],
-      "commands": {
-        "verify": [
-          "mvn test"
-        ]
-      }
+      "keyFiles": ["README.md", "VIBE_SPEC.md", "src/main/java/com/cardsense/api/service/DecisionEngine.java"],
+      "commands": { "verify": ["mvn test"] }
     },
     {
       "name": "cardsense-web",
       "path": "cardsense-web",
+      "cloneUrl": "https://github.com/WaddleStudio/cardsense-web.git",
+      "ref": "main",
       "purpose": "Frontend recommendation UX and calc surface",
       "role": "frontend",
       "generatedContextPath": "WORKSPACE_CONTEXT.generated.md",
-      "keyFiles": [
-        "README.md",
-        "src/lib/taxonomy.ts",
-        "src/types/enums.ts"
-      ],
-      "commands": {
-        "verify": [
-          "npm run build"
-        ]
-      }
+      "keyFiles": ["README.md", "src/lib/taxonomy.ts", "src/types/enums.ts"],
+      "commands": { "verify": ["npm run build"] }
     }
-  ]
+  ],
+  "agents": {
+    "claude": {
+      "target": ".claude",
+      "templateSource": "fleet-command/claude-config",
+      "skillsTarget": ".claude/skills",
+      "files": ["settings.json", "CLAUDE.md"]
+    },
+    "codex": {
+      "target": ".codex",
+      "templateSource": "fleet-command/codex-config",
+      "files": ["config.toml", "AGENTS.md"]
+    }
+  },
+  "osDeps": {
+    "windows": {
+      "manager": "winget",
+      "packages": [
+        { "id": "Git.Git", "verifyCmd": "git --version" },
+        { "id": "OpenJS.NodeJS.LTS", "verifyCmd": "node --version", "minVersion": "20" },
+        { "id": "Oven-sh.Bun", "verifyCmd": "bun --version" },
+        { "id": "Python.Python.3.13", "verifyCmd": "python --version" },
+        { "id": "astral-sh.uv", "verifyCmd": "uv --version" },
+        { "id": "Anthropic.Claude", "verifyCmd": "claude --version", "optional": true }
+      ]
+    },
+    "macos": {
+      "manager": "brew",
+      "packages": [
+        { "id": "git", "verifyCmd": "git --version" },
+        { "id": "node", "verifyCmd": "node --version" },
+        { "id": "bun", "verifyCmd": "bun --version" },
+        { "id": "python@3.13", "verifyCmd": "python3 --version" },
+        { "id": "uv", "verifyCmd": "uv --version" }
+      ]
+    },
+    "linux": {
+      "manager": "manual",
+      "note": "Verify commands only; install via distro PM / mise / asdf."
+    }
+  }
 }
