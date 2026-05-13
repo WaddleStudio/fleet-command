@@ -73,6 +73,23 @@ class TeardownDryRunTest(unittest.TestCase):
             self.assertIn("dry-run", result.stdout.lower())
             self.assertTrue((ws / "cardsense-api").exists())
 
+    @unittest.skipUnless(_has_bash(), "bash not on PATH")
+    def test_sh_accepts_powershell_style_workspace_alias(self) -> None:
+        if shutil.which("jq") is None:
+            self.skipTest("jq required")
+        bash = shutil.which("bash")
+        with tempfile.TemporaryDirectory() as tmp:
+            ws = _make_workspace_with_artifacts(tmp)
+            result = subprocess.run(
+                [bash, str(TEARDOWN_SH), "-Workspace", str(ws)],
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn(f"Workspace: {ws}", result.stdout)
+            self.assertIn("dry-run", result.stdout.lower())
+            self.assertTrue((ws / "cardsense-api").exists())
+
 
 if __name__ == "__main__":
     unittest.main()

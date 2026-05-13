@@ -11,11 +11,14 @@ resolve_workspace_root() {
   else
     local script_dir
     script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
-    resolved="$(cd "$script_dir/.." && pwd -P)"
+    resolved="$(cd "$script_dir/../.." && pwd -P)"
   fi
   if [[ ! -d "$resolved" ]]; then
     echo "Workspace path does not exist: $resolved" >&2
     return 1
+  fi
+  if [[ -f "$resolved/workspace/workspace.manifest.json" && "$(basename "$resolved")" == "fleet-command" ]]; then
+    resolved="$(cd "$resolved/.." && pwd -P)"
   fi
   printf '%s' "$resolved"
 }

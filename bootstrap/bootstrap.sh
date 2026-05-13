@@ -47,6 +47,16 @@ echo "Workspace: $WS"
 echo "OS:        $OS_KEY"
 echo "Mode:      $($DRY_RUN && echo dry-run || echo apply)"
 
+is_generated_context_placeholder() {
+  local target="$1"
+  [[ -d "$target" ]] || return 1
+  [[ -f "$target/WORKSPACE_CONTEXT.generated.md" ]] || return 1
+  [[ ! -e "$target/.git" ]] || return 1
+  local entries
+  entries="$(find "$target" -mindepth 1 -maxdepth 1 -print | wc -l)"
+  [[ "$entries" -eq 1 ]]
+}
+
 stage_osdeps() {
   write_stage 'Stage 1: OS dependencies'
   local manager
@@ -87,10 +97,17 @@ stage_repos() {
   while IFS=$'\t' read -r name path cloneUrl ref; do
     if [[ "$name" == "fleet-command" ]]; then echo "[self] fleet-command"; continue; fi
     local target="$WS/$path"
-    if [[ ! -d "$target" ]]; then
+    if [[ ! -d "$target" || "$(is_generated_context_placeholder "$target" && echo true || echo false)" == "true" ]]; then
       if $DRY_RUN; then
+        if [[ -d "$target" ]]; then
+          write_dry_run "remove generated context placeholder $target"
+        fi
         write_dry_run "git clone --branch $ref $cloneUrl $target"
       else
+        if [[ -d "$target" ]]; then
+          rm "$target/WORKSPACE_CONTEXT.generated.md"
+          rmdir "$target"
+        fi
         git clone --branch "$ref" "$cloneUrl" "$target"
       fi
       continue

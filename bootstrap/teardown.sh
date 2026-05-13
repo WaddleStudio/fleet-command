@@ -17,11 +17,11 @@ KEEP_PATTERNS=()
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --apply) APPLY=true; shift ;;
-    --nuke)  NUKE=true; shift ;;
-    --workspace) WORKSPACE_OVERRIDE="$2"; shift 2 ;;
-    --keep) KEEP_PATTERNS+=("$2"); shift 2 ;;
-    --verbose) shift ;;
+    --apply|-Apply) APPLY=true; shift ;;
+    --nuke|-Nuke)  NUKE=true; shift ;;
+    --workspace|-Workspace) WORKSPACE_OVERRIDE="$2"; shift 2 ;;
+    --keep|-Keep) KEEP_PATTERNS+=("$2"); shift 2 ;;
+    --verbose|-Verbose) shift ;;
     -h|--help) sed -n '2,5p' "$0"; exit 0 ;;
     *) echo "Unknown flag: $1" >&2; exit 2 ;;
   esac
