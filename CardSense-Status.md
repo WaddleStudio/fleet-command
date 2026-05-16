@@ -6,7 +6,7 @@ CardSense is the Taiwan credit-card payment decision engine for answering one ch
 
 > **Live**: https://cardsense-web.vercel.app
 > **Dashboard**: [fleet-command/dashboard](./dashboard/index.html)
-> **Last updated**: 2026-05-09
+> **Last updated**: 2026-05-16
 > **Direction docs**: [2026-04-29 Review](./reviews/2026-04-29-cardsense-review/CardSense-Review-2026-04-29.md) + [Product Direction vs iCard.AI](./reviews/2026-04-29-cardsense-review/CardSense-Product-Direction-vs-iCardAI.md)
 
 ---
@@ -30,9 +30,9 @@ The request path stays deterministic. LLMs may help parsing, drafting explanatio
 | Product | Merchant-first checkout decision surface (「這間商家該刷哪張卡？」), My Wallet, benefit plan switching, recommendation result, and share flow. |
 | Frontend | React/Vite app live on Vercel. Checkout Mode transaction panel replaces the calculator keypad: merchant, payment method, wallet count, amount, and readiness checks are shown as one checkout-time decision summary. Mobile progressive disclosure keeps exchange rate and plan switching behind 進階設定. Cold start banner with 60s retry messaging. |
 | API | Spring Boot deterministic `DecisionEngine`: channel=ALL wildcard, invalid enum → 400, per-IP rate limiting, body size limit. `excludedConditions` honors PAYMENT/VENUE; canonical payment alias expansion (e.g. "LINE Pay" → `LINE_PAY`); merchant-input no longer leaks into payment matching. |
-| Data | E.SUN, CATHAY, TAISHIN, FUBON, CTBC. High-frequency merchants: 全聯, momo, Shopee, Agoda, Uber Eats, LINE Pay, Apple Pay, Costco, insurance, overseas, Japan spend. Payment-classification rules encoded for Unicard 百大 (third-party-payment reclassify), Richart 天天刷 (`TAISHIN_PAY` gate at 7-11/全家), 富邦 momo (third-party-payment downgrade), 富邦數位生活卡 (channel-rail physical-category exclusion). |
+| Data | E.SUN, CATHAY, TAISHIN, FUBON, CTBC refreshed locally on 2026-05-16. Local `promotion_current` now has 841 rows, 785 ACTIVE rows, 0 expired ACTIVE rows, and 49 promos expiring within 30 days. CATHAY CUBE `全支付` is now represented as a dedicated benefit plan and promotion. High-frequency merchants: 全聯, momo, Shopee, Agoda, Uber Eats, LINE Pay, Apple Pay, Costco, insurance, overseas, Japan spend. |
 | Trust | Result panel shows confidence, validUntil, matched promo count, source URL, and no-result reason. Atomic promotion publishing. |
-| QA | Regression suite covers momo, Shopee, Agoda, Uber Eats, Apple Pay, Costco, insurance, overseas, and the 4 payment-classification patterns (api 92 passing, extractor 170 passing). |
+| QA | Regression suite covers momo, Shopee, Agoda, Uber Eats, Apple Pay, Costco, insurance, overseas, and the 4 payment-classification patterns. Promotion expiry audit added 2026-05-16; local/API DB expiry gate now passes with 0 expired ACTIVE rows. Latest local checks: extractor focused tests 17 passing, API benefit-plan test 10 passing, full local refresh/deploy passing with 841 rows. |
 
 The dashboard shows repo health, roadmap progress, open action queue, latest checks, and release evidence links.
 
@@ -82,6 +82,9 @@ The dashboard shows repo health, roadmap progress, open action queue, latest che
 | Supabase / Cloudflare secret rotation | Vendor-console credentials still need real rotation. | Security — do now |
 | Secret scanning | Gitleaks config + GitHub Actions workflow added across CardSense repos. | Done 2026-05-08 |
 | `recommendation_audits` | Money decisions need request/response, promo versions, engine version, latency, and errors. | 60-90 days |
+| Promotion expiry closure | API date filters exclude expired promos from recommendations. Extractor expiry audit and post-import cleanup now mark expired `promotion_current` rows as `EXPIRED`; local/API DB gate passed 2026-05-16. Next step is CI/deploy gate. | 31-60 days |
+| CTBC card-name guardrail | 2026-05-16 full local refresh initially failed on one CTBC card where cleaned `cardName` became too short (`卡`). Extractor now falls back to slug/original name; full local refresh passed afterward. | Done 2026-05-16 |
+| Quarterly source audit layer | CUBE `全支付` showed that extractor output can miss newly introduced benefit-plan structures. Add independent bank source review before trusting quarterly refresh output; use model-assisted parsing only as candidate generation behind schema/tests/human approval. | Data/trust - do now |
 | `promoId` logical key hardening | Same-title same-day promotions can collide. | 31-60 days |
 | Feedback widget upload security | Direct anon upload/insert too exposed for production. | 31-60 days |
 | Pinned contracts dependency | Vercel builds should not clone mutable contracts branches. | 31-60 days |
