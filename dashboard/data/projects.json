@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-05-09",
+  "updatedAt": "2026-09-14",
   "workspace": {
     "name": "cardsense-workspace",
     "sourceOfTruth": "../CardSense-Status.md",
@@ -13,15 +13,15 @@
       "repo": "WaddleStudio/cardsense-web",
       "path": "../cardsense-web",
       "role": "Frontend checkout decision UX and wallet comparison surface",
-      "stage": "Live",
-      "health": "healthy",
-      "focus": "Merchant-first Checkout Mode, My Wallet, trust result panel, mobile progressive disclosure",
+      "stage": "Archived / Technical Asset Retained",
+      "health": "archived",
+      "focus": "Commercial No-Go: retained engineering reference; no feature work or promotion maintenance.",
       "stack": ["React 19", "TypeScript 5.9", "Vite 8", "Tailwind CSS 4", "shadcn/ui"],
       "commands": ["npm run build", "npm run test:unit"],
       "links": {
         "github": "https://github.com/WaddleStudio/cardsense-web",
-        "production": "https://cardsense-web.vercel.app",
-        "calc": "https://cardsense-web.vercel.app/calc?amount=1000"
+        "historical-production": "https://cardsense-web.vercel.app",
+        "historical-calc": "https://cardsense-web.vercel.app/calc?amount=1000"
       }
     },
     {
@@ -30,14 +30,14 @@
       "repo": "WaddleStudio/cardsense-api",
       "path": "../cardsense-api",
       "role": "Deterministic recommendation API runtime and repository adapters",
-      "stage": "Production runtime",
-      "health": "healthy",
-      "focus": "DecisionEngine, request validation, merchant matching, trust metadata passthrough, public POST protection",
+      "stage": "Archived / Technical Asset Retained",
+      "health": "archived",
+      "focus": "Commercial No-Go: retained engineering reference; no feature work or promotion maintenance.",
       "stack": ["Java 21", "Spring Boot", "SQLite", "Supabase", "Maven"],
       "commands": ["mvn test"],
       "links": {
         "github": "https://github.com/WaddleStudio/cardsense-api",
-        "health": "https://cardsense-api.onrender.com/health"
+        "historical-health": "https://cardsense-api.onrender.com/health"
       }
     },
     {
@@ -46,9 +46,9 @@
       "repo": "WaddleStudio/cardsense-extractor",
       "path": "../cardsense-extractor",
       "role": "Promotion extraction, normalization, import, and sync pipeline",
-      "stage": "Ops pipeline",
-      "health": "watch",
-      "focus": "Bank promo extraction, SQLite import, Supabase sync, atomic publish, credential policy",
+      "stage": "Archived / Technical Asset Retained",
+      "health": "archived",
+      "focus": "Commercial No-Go: retained engineering reference; no feature work or promotion maintenance.",
       "stack": ["Python 3.13", "uv", "Pydantic", "SQLite", "Supabase"],
       "commands": ["uv run pytest", "uv run python jobs/refresh_and_deploy.py --help"],
       "links": {
@@ -61,9 +61,9 @@
       "repo": "WaddleStudio/cardsense-contracts",
       "path": "../cardsense-contracts",
       "role": "Shared schemas, DTOs, taxonomies, merchant registry, stackability, benefit plans",
-      "stage": "Shared foundation",
-      "health": "healthy",
-      "focus": "Recommendation request/response schemas, trust fields, no-result fields, merchant taxonomy",
+      "stage": "Archived / Technical Asset Retained",
+      "health": "archived",
+      "focus": "Commercial No-Go: retained engineering reference; no feature work or promotion maintenance.",
       "stack": ["JSON Schema"],
       "commands": ["rg -n \"TRAVEL\" promotion recommendation taxonomy"],
       "links": {

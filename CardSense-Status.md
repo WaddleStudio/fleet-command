@@ -1,17 +1,22 @@
+> **Archived / Commercial No-Go / Technical Asset Retained (2026-09).**
+> Product development and promotion maintenance have stopped. The historical strategy, roadmap, dates, row counts, health reports, and unfinished tasks below are reference only, not current claims or commitments.
+> [Canonical decision](https://github.com/WaddleStudio/cardsense-api/blob/master/ARCHIVED.md) · [Closure report](https://github.com/WaddleStudio/cardsense-api/blob/master/docs/2026-09-cardsense-closure.md) · [Manual shutdown](https://github.com/WaddleStudio/cardsense-api/blob/master/docs/ARCHIVE_SHUTDOWN_CHECKLIST.md).
+> No feature work should resume unless the reopening criteria in ARCHIVED.md are met. External shutdown remains unverified.
+
 # CardSense Status
 
 CardSense is the Taiwan credit-card payment decision engine for answering one checkout-time question:
 
 > Given my cards, merchant, payment method, amount, and today's rules, which card should I use, what do I actually earn, and why might the answer change?
 
-> **Live**: https://cardsense-web.vercel.app
+> **Historical deployment (availability unverified)**: https://cardsense-web.vercel.app
 > **Dashboard**: [fleet-command/dashboard](./dashboard/index.html)
-> **Last updated**: 2026-05-16
+> **Last updated**: 2026-09-14
 > **Direction docs**: [2026-04-29 Review](./reviews/2026-04-29-cardsense-review/CardSense-Review-2026-04-29.md) + [Product Direction vs iCard.AI](./reviews/2026-04-29-cardsense-review/CardSense-Product-Direction-vs-iCardAI.md)
 
 ---
 
-## Product Position
+## Historical Product Position
 
 CardSense is not trying to clone iCard.AI, Money101, or card news SEO directories in the short term. The wedge is:
 
@@ -23,7 +28,7 @@ The request path stays deterministic. LLMs may help parsing, drafting explanatio
 
 ---
 
-## Current Capability
+## Retained Capability — historical 2026-05 snapshot
 
 | Area | Current state |
 |------|---------------|
@@ -50,9 +55,9 @@ The dashboard shows repo health, roadmap progress, open action queue, latest che
 
 ---
 
-## Roadmap
+## Historical roadmap — no longer planned
 
-### 31-60 Days: Build Retention
+### Historical 31-60 Days: Build Retention
 
 | Workstream | Outcome |
 |------------|---------|
@@ -63,7 +68,7 @@ The dashboard shows repo health, roadmap progress, open action queue, latest che
 | Growth | 3-5 high-trust scenario pages plus methodology page. |
 | Ops | Production runbook, rollback drill, scheduled sync monitoring, and secret-scanning CI guardrails. |
 
-### 61-90 Days: Create Defensibility
+### Historical 61-90 Days: Create Defensibility
 
 | Workstream | Outcome |
 |------------|---------|
@@ -75,7 +80,7 @@ The dashboard shows repo health, roadmap progress, open action queue, latest che
 
 ---
 
-## Open Follow-Ups
+## Historical Follow-Ups — no active feature commitments
 
 | Item | Why it matters | Suggested timing |
 |------|----------------|------------------|

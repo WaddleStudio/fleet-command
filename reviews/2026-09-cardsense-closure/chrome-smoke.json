@@ -1,0 +1,18 @@
+{
+  "browser": "Installed Google Chrome, headless",
+  "url": "http://127.0.0.1:5177/dashboard/",
+  "httpStatus": 200,
+  "title": "Fleet Command Dashboard",
+  "loadErrorHidden": true,
+  "projectCards": 5,
+  "archivedProjects": 4,
+  "historicalRoadmapColumns": 3,
+  "shutdownActions": 2,
+  "consoleErrors": [],
+  "jsonHttpStatus": {
+    "projects": 200,
+    "roadmap": 200,
+    "checks": 200,
+    "releases": 200
+  }
+}

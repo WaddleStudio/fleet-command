@@ -1,3 +1,5 @@
+> **Historical / superseded / not planned (2026-09).** CardSense is archived. This document and its linked CardSense plans are engineering history, not an active roadmap or an instruction to run production operations. [Archive decision](https://github.com/WaddleStudio/cardsense-api/blob/master/ARCHIVED.md).
+
 # CardSense — 完整專案規格說明書
 ### Version 1.2 | 2026-04-17
 

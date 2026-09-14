@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-05-08",
-  "source": "../CardSense-Status.md#306090-roadmap",
+  "updatedAt": "2026-09-14",
+  "source": "../CardSense-Status.md#historical-roadmap--no-longer-planned",
   "horizons": [
     {
       "id": "0-30",
-      "name": "0-30 days",
-      "theme": "Prove The Decision Wedge",
-      "status": "active",
+      "name": "Historical 0-30 days",
+      "theme": "Prove The Decision Wedge — no longer planned",
+      "status": "archived",
       "progress": 95,
       "items": [
         {
@@ -43,80 +43,80 @@
         {
           "workstream": "Security",
           "deliverable": "Per-IP rate limiting + body size limit on public API; Gitleaks secret scanning; external secret rotation pending vendor console action",
-          "status": "blocked"
+          "status": "cancelled"
         }
       ]
     },
     {
       "id": "31-60",
-      "name": "31-60 days",
-      "theme": "Build Retention",
-      "status": "planned",
+      "name": "Historical 31-60 days",
+      "theme": "Build Retention — no longer planned",
+      "status": "archived",
       "progress": 12,
       "items": [
         {
           "workstream": "Product",
           "deliverable": "Manual cap usage, reward ledger, and bonus progress",
-          "status": "next"
+          "status": "cancelled"
         },
         {
           "workstream": "Data",
           "deliverable": "User correction loop for reward posted, did not post, or merchant categorized differently",
-          "status": "next"
+          "status": "cancelled"
         },
         {
           "workstream": "UX",
           "deliverable": "Promotion expiry alerts and best-card changed alerts",
-          "status": "next"
+          "status": "cancelled"
         },
         {
           "workstream": "Engine",
           "deliverable": "Confidence score based on source freshness, merchant certainty, and rule completeness",
-          "status": "next"
+          "status": "cancelled"
         },
         {
           "workstream": "Growth",
           "deliverable": "3-5 high-trust scenario pages plus methodology page",
-          "status": "next"
+          "status": "cancelled"
         },
         {
           "workstream": "Ops",
           "deliverable": "Production runbook, rollback drill, and scheduled sync monitoring for promotion publishing",
-          "status": "next"
+          "status": "cancelled"
         }
       ]
     },
     {
       "id": "61-90",
-      "name": "61-90 days",
-      "theme": "Create Defensibility",
-      "status": "planned",
+      "name": "Historical 61-90 days",
+      "theme": "Create Defensibility — no longer planned",
+      "status": "archived",
       "progress": 0,
       "items": [
         {
           "workstream": "Product",
           "deliverable": "Personal card strategy dashboard for caps, annual fee thresholds, and first-spend tasks",
-          "status": "next"
+          "status": "cancelled"
         },
         {
           "workstream": "Data",
           "deliverable": "Source snapshots, promotion change history, and versioned audit trail",
-          "status": "next"
+          "status": "cancelled"
         },
         {
           "workstream": "Engine",
           "deliverable": "Scenario simulation for amount changes, cap used, not new customer, and wrong payment method",
-          "status": "next"
+          "status": "cancelled"
         },
         {
           "workstream": "Trust",
           "deliverable": "Public methodology page and affiliate policy",
-          "status": "next"
+          "status": "cancelled"
         },
         {
           "workstream": "Growth",
           "deliverable": "CardSense Verified pages for top 100 merchants/scenarios",
-          "status": "next"
+          "status": "cancelled"
         }
       ]
     }

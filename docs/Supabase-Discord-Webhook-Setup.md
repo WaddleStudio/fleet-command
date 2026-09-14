@@ -1,3 +1,5 @@
+> **Historical / superseded / not planned (2026-09).** CardSense is archived. This document and its linked CardSense plans are engineering history, not an active roadmap or an instruction to run production operations. [Archive decision](https://github.com/WaddleStudio/cardsense-api/blob/master/ARCHIVED.md).
+
 # Supabase 串接 Discord 回饋系統安裝指南
 
 為了將 **Native Feedback Widget** 無縫對接到 Supabase，並即時透過 Discord 接收通知，請依照以下步驟在 Supabase 控制台進行設定。
