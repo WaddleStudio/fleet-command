@@ -1,3 +1,5 @@
+> **Historical / superseded / not planned (2026-09).** CardSense is archived. This document and its linked CardSense plans are engineering history, not an active roadmap or an instruction to run production operations. [Archive decision](https://github.com/WaddleStudio/cardsense-api/blob/master/ARCHIVED.md).
+
 # CardSense Review — 2026-04-29
 
 本次依序執行 `/office-hours`、`/plan-ceo-review`、`/plan-design-review`、`/design-review`、`/qa-only`、`/plan-eng-review`、`/review`、`/cso`，採 report-only。未修改產品程式碼。

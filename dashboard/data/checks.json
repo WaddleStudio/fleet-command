@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-05-08",
+  "updatedAt": "2026-09-14",
   "summary": {
-    "status": "watch",
-    "headline": "Open work: vendor secret rotation, data, QA, ops.",
+    "status": "archived",
+    "headline": "Commercial No-Go / Technical Asset Retained. Promotion data is historical; external shutdown is pending.",
     "lastProductionSmoke": "2026-05-05",
     "evidencePath": "../reviews/2026-05-03-post-merge-chrome/",
     "lastEngineSmoke": {
@@ -16,21 +16,21 @@
   "healthChecks": [
     {
       "id": "prod-home",
-      "label": "Production home",
+      "label": "Historical: Production home",
       "status": "pass",
       "lastRun": "2026-05-03",
       "evidence": "../reviews/2026-05-03-post-merge-chrome/chrome-smoke-report.json"
     },
     {
       "id": "prod-calculator",
-      "label": "Production calculator route",
+      "label": "Historical: Production calculator route",
       "status": "pass",
       "lastRun": "2026-05-03",
       "evidence": "../reviews/2026-05-03-post-merge-chrome/chrome-smoke-report.json"
     },
     {
       "id": "api-health",
-      "label": "API health and cards smoke",
+      "label": "Historical: API health and cards smoke",
       "status": "pass",
       "lastRun": "2026-05-03",
       "evidence": "../reviews/2026-05-03-post-merge-chrome/chrome-smoke-report.json"
@@ -38,49 +38,22 @@
   ],
   "actionQueue": [
     {
-      "id": "secret-rotation",
-      "priority": "P0",
-      "title": "Rotate Supabase and Cloudflare secrets in vendor consoles",
-      "owner": "Security/Ops",
+      "id": "archive-shutdown",
+      "priority": "P1",
+      "title": "Confirm external CardSense shutdown",
+      "owner": "Owner / platform dashboards",
       "status": "blocked",
-      "nextStep": "Rotate external credentials, update deployment secrets, then record completion in the runbook.",
-      "source": "../CardSense-Status.md#open-follow-ups"
+      "nextStep": "Check Vercel, Render/Railway, Supabase, Cloudflare, local/k3s schedulers and billing; preserve data. See the archive shutdown checklist.",
+      "source": "https://github.com/WaddleStudio/cardsense-api/blob/master/docs/ARCHIVE_SHUTDOWN_CHECKLIST.md"
     },
     {
-      "id": "secret-scanning",
-      "priority": "P0",
-      "title": "Add secret scanning guardrail",
-      "owner": "Security/Ops",
-      "status": "done",
-      "nextStep": "Gitleaks configs and GitHub Actions workflows are now present across CardSense repos; monitor CI on the next PR.",
-      "source": "../CardSense-Status.md#open-follow-ups"
-    },
-    {
-      "id": "recommendation-audits",
+      "id": "secret-rotation",
       "priority": "P1",
-      "title": "Design persistent recommendation audit trail",
-      "owner": "Data/Trust",
-      "status": "next",
-      "nextStep": "Capture request, response, evaluated promo versions, engine version, latency, and error fields.",
-      "source": "../CardSense-Status.md#open-follow-ups"
-    },
-    {
-      "id": "feedback-upload-security",
-      "priority": "P1",
-      "title": "Move feedback widget uploads behind backend protection",
-      "owner": "Security/Product",
-      "status": "next",
-      "nextStep": "Replace direct anon upload/insert with backend or Edge Function, CAPTCHA, MIME/size validation, and RLS.",
-      "source": "../CardSense-Status.md#open-follow-ups"
-    },
-    {
-      "id": "contracts-pinning",
-      "priority": "P1",
-      "title": "Pin contracts dependency in Vercel build",
-      "owner": "DX/Ops",
-      "status": "next",
-      "nextStep": "Replace mutable branch clone with pinned commit, tag, or package reference.",
-      "source": "../CardSense-Status.md#open-follow-ups"
+      "title": "Resolve historical credential follow-up during shutdown",
+      "owner": "Owner / vendor consoles",
+      "status": "blocked",
+      "nextStep": "Prior status recorded Supabase/Cloudflare rotation as pending. Confirm retirement of CardSense-only credentials or handle retained/shared services in the vendor console; no secrets were accessed in this closure.",
+      "source": "https://github.com/WaddleStudio/cardsense-api/blob/master/docs/ARCHIVE_SHUTDOWN_CHECKLIST.md"
     }
   ]
 }

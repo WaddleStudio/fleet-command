@@ -44,17 +44,17 @@ class DashboardDataTest(unittest.TestCase):
         self.assertEqual([horizon["id"] for horizon in horizons], ["0-30", "31-60", "61-90"])
 
         for horizon in horizons:
-            self.assertIn(horizon["status"], {"active", "planned"})
+            self.assertIn(horizon["status"], {"active", "planned", "archived"})
             self.assertGreaterEqual(horizon["progress"], 0)
             self.assertLessEqual(horizon["progress"], 100)
             self.assertGreater(len(horizon["items"]), 0)
             for item in horizon["items"]:
                 self.assertTrue({"workstream", "deliverable", "status"}.issubset(item), item)
-                self.assertIn(item["status"], {"active", "next", "blocked", "done"})
+                self.assertIn(item["status"], {"active", "next", "blocked", "done", "cancelled"})
 
     def test_checks_keep_open_work_separate_from_release_history(self) -> None:
         data = self._load("checks.json")
-        self.assertIn(data["summary"]["status"], {"healthy", "watch", "blocked"})
+        self.assertIn(data["summary"]["status"], {"healthy", "watch", "blocked", "archived"})
         self.assertGreater(len(data["healthChecks"]), 0)
         self.assertGreater(len(data["actionQueue"]), 0)
 

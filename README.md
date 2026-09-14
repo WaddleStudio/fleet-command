@@ -1,3 +1,6 @@
+> **CardSense status: Archived / Commercial No-Go / Technical Asset Retained (2026-09).**
+> [Archive decision](https://github.com/WaddleStudio/cardsense-api/blob/master/ARCHIVED.md). This status applies to CardSense only; other Fleet projects are unchanged.
+
 # Fleet Command（專案艦隊指揮中心）
 
 七個 side project 的統一規格書庫 — 架構文件、專案 Spec、TechTrend 知識庫來源。
@@ -26,7 +29,7 @@ ext:      .md / .txt
 
 | 專案 | 定位 | 技術棧 | 狀態 |
 |------|------|--------|------|
-| **CardSense** | 信用卡推薦 API（確定性規則引擎） | Java 21 / Spring Boot / React 19 / Vite / Python 3.13 / Supabase | ✅ Live（5 銀行、首頁算卡計算機） |
+| **CardSense** | 信用卡推薦 API（確定性規則引擎） | Java 21 / Spring Boot / React 19 / Vite / Python 3.13 / Supabase | Archived / Commercial No-Go (2026-09) |
 | **ReviewTrustAnalyzer** | Google Maps 評論信任度分析 | Python / FastAPI / pgvector | V1 ✅ |
 | **SEEDCRAFT** | LINE-first 家庭教育教練 | Python / FastAPI / LINE SDK / Next.js | Rebrand ✅ |
 | **TechTrend** | B2B 技術週刊（NotebookLM → SaaS） | Next.js / Stripe | Spec ✅ |
@@ -88,10 +91,10 @@ python -m http.server 5177
 
 | Repo | 內容 | Spec | 狀態 |
 |------|------|------|------|
-| [cardsense-contracts](https://github.com/WaddleStudio/cardsense-contracts) | 共用資料模型 | §4 | Schema 穩定 |
-| [cardsense-extractor](https://github.com/WaddleStudio/cardsense-extractor) | 銀行爬蟲 + 正規化 | §3 | 5 銀行完成 + Supabase sync |
-| [cardsense-api](https://github.com/WaddleStudio/cardsense-api) | 推薦 API | §4-5 | Supabase prod 部署 |
-| [cardsense-web](https://github.com/WaddleStudio/cardsense-web) | 前端展示（首頁算卡計算機 + 卡片目錄） | spec-cardSense | Vercel Live |
+| [cardsense-contracts](https://github.com/WaddleStudio/cardsense-contracts) | 共用資料模型 | §4 | Archived; schemas retained |
+| [cardsense-extractor](https://github.com/WaddleStudio/cardsense-extractor) | 銀行爬蟲 + 正規化 | §3 | Archived; extraction/sync retained |
+| [cardsense-api](https://github.com/WaddleStudio/cardsense-api) | 推薦 API | §4-5 | Archived; runtime retained |
+| [cardsense-web](https://github.com/WaddleStudio/cardsense-web) | 前端展示（首頁算卡計算機 + 卡片目錄） | spec-cardSense | Archived; UI retained |
 | [review-trust-analyzer](https://github.com/WaddleStudio/review-trust-analyzer) | 混合評分系統 | spec-rta | |
 | [seedcraft](https://github.com/WaddleStudio/seedcraft) | LINE Bot + LIFF | spec-seedcraft | |
 | [techtrend](https://github.com/WaddleStudio/techtrend) | B2B 技術週刊 | spec-techtrend | |
