@@ -1,6 +1,6 @@
 > **Archived / Commercial No-Go / Technical Asset Retained (2026-09).**
 > Product development and promotion maintenance have stopped. The historical strategy, roadmap, dates, row counts, health reports, and unfinished tasks below are reference only, not current claims or commitments.
-> [Canonical decision](https://github.com/WaddleStudio/cardsense-api/blob/master/ARCHIVED.md) · [Closure report](../cardsense-api/docs/2026-09-cardsense-closure.md) · [Manual shutdown](../cardsense-api/docs/ARCHIVE_SHUTDOWN_CHECKLIST.md).
+> [Canonical decision](https://github.com/WaddleStudio/cardsense-api/blob/master/ARCHIVED.md) · [Closure report](https://github.com/WaddleStudio/cardsense-api/blob/master/docs/2026-09-cardsense-closure.md) · [Manual shutdown](https://github.com/WaddleStudio/cardsense-api/blob/master/docs/ARCHIVE_SHUTDOWN_CHECKLIST.md).
 > No feature work should resume unless the reopening criteria in ARCHIVED.md are met. External shutdown remains unverified.
 
 # CardSense Status
